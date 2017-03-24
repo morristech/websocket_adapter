@@ -22,4 +22,5 @@ package universum.studios.websocket.adapter;
  * @author Martin Albedinsky
  */
 public interface WebSocketFacade {
+
 }
