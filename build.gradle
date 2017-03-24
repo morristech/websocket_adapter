@@ -47,6 +47,19 @@ task clean(type: Delete) {
 }
 
 /**
+ * Task that cleans plugin artifacts directory.
+ */
+task cleanArtifacts(type: Delete) {
+    // delete 'artifacts/universum/studios/gradle'
+}
+
+/**
+ * Task that updates plugin artifacts directory.
+ */
+task updateArtifacts(dependsOn: ':library:updateArtifacts') {
+}
+
+/**
  * Task that deploys (uploads) the plugin into Maven local repository.
  */
 task deployToMavenLocal(dependsOn: ':library:uploadArchives') {

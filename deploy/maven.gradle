@@ -74,3 +74,25 @@ afterEvaluate { project ->
         }
     }
 }
+
+/**
+ * Task that updates library artifacts directory with artifacts from the Maven local directory.
+ */
+task updateArtifacts() {
+    final String mavenLocalDir = config.maven.localUrl
+    if (mavenLocalDir != null && !config.ci.travis) {
+        final String artifactId = config.maven.artifactId
+        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\${artifactId}\\${config.library.version}"
+        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\${artifactId}\\${config.library.version}"
+        delete artifactsDestinationDir
+        copy {
+            from artifactsSourceDir
+            into artifactsDestinationDir
+        }
+        if (file(artifactsDestinationDir).exists()) {
+            exec {
+                commandLine 'git', 'add', artifactsDestinationDir, '-A'
+            }
+        }
+    }
+}

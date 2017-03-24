@@ -21,8 +21,7 @@ apply plugin: 'java'
 /**
  * Library options =================================================================================
  */
-sourceCompatibility = 1.5
-
+sourceCompatibility = JavaVersion.VERSION_1_7
 
 /**
  * Library dependencies ============================================================================
@@ -31,9 +30,13 @@ dependencies {
     /*
      * RELEASE DEPENDENCIES ------------------------------------------------------------------------
      */
+    // None.
 
     /*
      * TEST DEPENDENCIES ---------------------------------------------------------------------------
      */
     testCompile deps.test.junit
 }
+
+// Apply DEPLOY script.
+apply from: '../deploy/deploy.gradle'

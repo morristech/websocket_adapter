@@ -26,7 +26,7 @@ import org.junit.Test;
 public class WebSocketAdapterTest {
 
 	@Test
-	public void testInstantiation() {
-
+	public void test() {
+		// todo:
 	}
 }
