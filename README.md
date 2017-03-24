@@ -1,6 +1,9 @@
 WebSocket Adapter
 ===============
 
+[![Build Status](https://travis-ci.org/universum-studios/java_websocket_adapter.svg?branch=master)](https://travis-ci.org/universum-studios/java_websocket_adapter)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eddbabb9b1942548519bf8bb665de95)](https://www.codacy.com/app/universum-studios/gradle_project_template_plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/gradle_project_template_plugin&amp;utm_campaign=Badge_Grade)
+
 Socket implementation that wraps asynchronous nature of WebSocket.
 
 For more information please visit the **[Wiki](https://github.com/universum-studios/java_websocket_adapter/wiki)**.
