@@ -16,39 +16,38 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
-apply plugin: 'jacoco'
-
-/**
- * Library options =================================================================================
- */
-sourceCompatibility = JavaVersion.VERSION_1_7
-
-// Tests Coverage reports configuration.
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        xml.destination "${buildDir}/reports/coverage/debug/report.xml"
-    }
+repositories {
+    maven { url repos.jitpack }
+    maven { url repos.bintray.typesafeMavenReleases }
 }
 
-/**
- * Library dependencies ============================================================================
- */
+configurations { codacy }
+
 dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    // None.
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    testCompile deps.test.junit
+    codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
 }
 
-// Apply DEPLOY script.
-apply from: '../deploy/deploy.gradle'
-
-// Apply CODACY script.
-apply from: 'codacy.gradle'
+/**
+ * Task that uploads code coverage up to the Codacy cloud.
+ */
+task uploadCoverageToCodacy(type: JavaExec, dependsOn: 'jacocoTestReport') {
+    final String token
+    final File tokensFile = file(config.codacy.tokensPath)
+    if (tokensFile.exists()) {
+        def Properties tokens = new Properties()
+        tokens.load(new FileInputStream(tokensFile))
+        token = tokens[config.codacy.projectName]
+    } else {
+        token = System.getenv('CODACY_PROJECT_TOKEN')
+    }
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "-l",
+            "Java",
+            "-r",
+            "${buildDir}/reports/coverage/debug/report.xml",
+            "--projectToken",
+            token == null ? "NO_TOKEN" : token
+    ]
+}
