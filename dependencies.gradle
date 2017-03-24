@@ -1,0 +1,15 @@
+// Defines dependencies used across the library project.
+def versions = [
+        gradleVersion: '2.3.0'
+]
+
+ext.versions = versions
+
+def test = [
+        junit      : 'junit:junit:4.12',
+        mockitoCore: 'org.mockito:mockito-core:2.0.57-beta'
+]
+
+ext.deps = [
+        "test": test
+]

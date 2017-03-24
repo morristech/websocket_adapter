@@ -1,0 +1,44 @@
+// Defines configuration used across the library project.
+def libraryConfig = [
+        version: '0.0.1'
+]
+
+def mavenConfig = [
+        localUrl                 : System.getenv('MAVEN_URL_LOCAL'),
+        groupId                  : 'universum.studios',
+        artifactId               : 'websocket-adapter',
+        version                  : libraryConfig.version,
+        packaging                : 'pom',
+        projectName              : 'Java WebSocket Adapter',
+        projectDescription       : 'Socket implementation that wraps asynchronous nature of WebSocket.',
+        projectUrl               : 'https://github.com/universum-studios/java_websocket_adapter',
+        projectInceptionYear     : '2017',
+        projectIssueManagementUrl: 'https://github.com/universum-studios/java_websocket_adapter/issues'
+]
+
+def bintrayConfig = [
+        publish                  : false,
+        packageName              : mavenConfig.groupId + ':' + mavenConfig.artifactId,
+        packageLabels            : ['java', 'websocket', 'adapter'],
+        packageVersionName       : mavenConfig.version,
+        packageVersionDescription: 'Pre-release patch.',
+        packageVersionTag        : mavenConfig.version
+]
+
+def codacyConfig = [
+        // This path must be relative to the codacy.gradle file placed in the /plugin directory.
+        tokensPath : '../../codacy.tokens',
+        projectName: 'java_websocket_adapter'
+]
+
+def ciConfig = [
+        travis: Boolean.parseBoolean(System.getenv('TRAVIS'))
+]
+
+ext.config = [
+        "library": libraryConfig,
+        "maven"  : mavenConfig,
+        "bintray": bintrayConfig,
+        "codacy" : codacyConfig,
+        "ci"     : ciConfig
+]

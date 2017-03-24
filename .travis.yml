@@ -1,0 +1,28 @@
+language: java
+jdk: oraclejdk8
+sudo: false
+
+# Branches
+branches:
+  only:
+    - develop
+    - /^release.*$/
+    - master
+
+# Continous integration scripts
+before_install:
+  - chmod +x gradlew
+
+before_script:
+  - ./ci/permissions.sh
+
+script:
+  - ./ci/tests.sh
+
+after_success:
+  - ./ci/coverage.sh
+  - ./ci/deploy.sh
+
+# Notications
+notifications:
+  email: false

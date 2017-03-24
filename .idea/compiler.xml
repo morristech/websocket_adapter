@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="library_main" target="1.5" />
+      <module name="library_test" target="1.5" />
+      <module name="websocket-adapter_main" target="1.5" />
+      <module name="websocket-adapter_test" target="1.5" />
+      <module name="WebSocketAdapter_main" target="1.5" />
+      <module name="WebSocketAdapter_test" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

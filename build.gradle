@@ -1,0 +1,59 @@
+// Global gradle configuration. This configuration will be used for all sub-projects.
+apply from: './configuration.gradle'
+apply from: './repositories.gradle'
+apply from: './dependencies.gradle'
+
+/**
+ * Global build script configuration ===============================================================
+ */
+buildscript {
+    apply from: './configuration.gradle'
+    apply from: './repositories.gradle'
+    apply from: './dependencies.gradle'
+
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+/**
+ * All projects global configuration ===============================================================
+ */
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+/**
+ * All projects global tasks =======================================================================
+ */
+/**
+ * Task that may be used to access Gradle Wrapper.
+ */
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+/**
+ * Task that cleans build directory of the root project.
+ */
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+/**
+ * Task that deploys (uploads) the plugin into Maven local repository.
+ */
+task deployToMavenLocal(dependsOn: ':library:uploadArchives') {
+}
+
+/**
+ * Task that deploys (uploads) the plugin up to the Bintray repository.
+ */
+task deployToBintray(dependsOn: ':library:bintrayUpload') {
+}

@@ -1,0 +1,76 @@
+/*
+ * =================================================================================================
+ *                             Copyright (C) 2016 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+apply plugin: 'maven'
+
+/**
+ * Maven configuration =============================================================================
+ */
+afterEvaluate { project ->
+    /**
+     * Uploads project's artifacts into the local maven repository.
+     * <p>
+     * This will also generate a POM file.
+     */
+    uploadArchives {
+        repositories.mavenDeployer {
+            repository(url: 'file:///' + config.maven.localUrl)
+            /**
+             * Project artifact --------------------------------------------------------------------
+             */
+            pom.groupId = config.maven.groupId
+            pom.artifactId = config.maven.artifactId
+            pom.version = config.maven.version
+            pom.packaging = config.maven.packaging
+            /**
+             * Project description -----------------------------------------------------------------
+             */
+            pom.project {
+                name config.maven.projectName
+                description config.maven.projectDescription
+                url config.maven.projectUrl
+                inceptionYear config.maven.projectInceptionYear
+                issueManagement {
+                    system 'GitHub Issues'
+                    url config.maven.projectIssueManagementUrl
+                }
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+                organization {
+                    name 'Universum Studios'
+                    url 'https://universum-studios.github.io'
+                }
+                developers {
+                    developer {
+                        id 'albedinsky'
+                        name 'Martin Albedinsky'
+                        email 'martin.albedinsky@gmail.com'
+                        roles {
+                            role 'Android Software Engineer'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
