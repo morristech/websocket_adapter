@@ -53,7 +53,7 @@ def pomConfig = {
 
 publishing {
     publications {
-        PluginPublication(MavenPublication) {
+        LibraryPublication(MavenPublication) {
             groupId config.maven.groupId
             artifactId config.maven.artifactId
             version config.maven.version
