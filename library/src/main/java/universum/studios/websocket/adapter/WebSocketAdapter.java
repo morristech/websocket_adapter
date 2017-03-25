@@ -18,9 +18,86 @@
  */
 package universum.studios.websocket.adapter;
 
+import com.sun.istack.internal.NotNull;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketAddress;
+
 /**
  * @author Martin Albedinsky
  */
-public class WebSocketAdapter {
+public class WebSocketAdapter extends Socket {
 
+	/**
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Interface ===================================================================================
+	 */
+
+	/**
+	 * Static members ==============================================================================
+	 */
+
+	/**
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * todo:
+	 */
+	private final WebSocketDelegate mWebSocketDelegate;
+
+	/**
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * todo:
+	 *
+	 * @param facade
+	 */
+	public WebSocketAdapter(@NotNull WebSocketDelegate facade) {
+		this.mWebSocketDelegate = facade;
+	}
+
+	/**
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void connect(SocketAddress endpoint) throws IOException {
+		super.connect(endpoint);
+	}
+
+	/**
+	 */
+	@Override
+	public void connect(SocketAddress endpoint, int timeout) throws IOException {
+		super.connect(endpoint, timeout);
+	}
+
+	/**
+	 */
+	@Override
+	public InputStream getInputStream() throws IOException {
+		return super.getInputStream();
+	}
+
+	/**
+	 */
+	@Override
+	public OutputStream getOutputStream() throws IOException {
+		return super.getOutputStream();
+	}
+
+	/**
+	 * Inner classes ===============================================================================
+	 */
 }

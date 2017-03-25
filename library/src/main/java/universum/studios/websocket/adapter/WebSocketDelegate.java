@@ -18,9 +18,42 @@
  */
 package universum.studios.websocket.adapter;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+
+import java.io.IOException;
+
 /**
+ * todo:
+ *
  * @author Martin Albedinsky
  */
-public interface WebSocketFacade {
+public interface WebSocketDelegate {
 
+	/**
+	 * todo:
+	 */
+	interface IncomingFrameCallback {
+
+		/**
+		 * todo:
+		 *
+		 * @param frameData
+		 */
+		void onReceiveFrame(@NotNull byte[] frameData);
+	}
+
+	/**
+	 * todo:
+	 *
+	 * @param callback
+	 */
+	void setIncomingFrameCallback(@Nullable IncomingFrameCallback callback);
+
+	/**
+	 * todo:
+	 *
+	 * @param frameData
+	 */
+	void sendFrame(@NotNull byte[] frameData) throws IOException;
 }
