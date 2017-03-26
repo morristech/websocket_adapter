@@ -18,7 +18,7 @@
  */
 package universum.studios.websocket.adapter;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;

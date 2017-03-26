@@ -39,7 +39,7 @@ dependencies {
     /*
      * RELEASE DEPENDENCIES ------------------------------------------------------------------------
      */
-    // None.
+    compile 'org.jetbrains:annotations:15.0'
 
     /*
      * TEST DEPENDENCIES ---------------------------------------------------------------------------
