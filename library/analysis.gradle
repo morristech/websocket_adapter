@@ -16,41 +16,28 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
-apply plugin: 'jacoco'
+apply plugin: 'findbugs'
 
 /**
- * Library options =================================================================================
+ * Task that executes FindBugs tool for a specific build variant.
  */
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
-// Tests Coverage reports configuration.
-jacocoTestReport {
+task("findBugs", type: FindBugs) {
+    description "Analyzes source code using the FindBugs tool."
+    group "Verification"
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "high"
+    classes = files(sourceSets.main.output.classesDir)
+    excludeFilter = file("${rootProject.rootDir}/analysis/findbugs-filter.xml")
+    source = sourceSets.main.java
+    classpath = sourceSets.main.compileClasspath
     reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
+        // Only one of HTML or XML can be turned on at the same time.
+        html.enabled = true
+        html.destination = "${buildDir}/reports/findbugs/index.html"
+        xml.enabled = !html.enabled
+        xml.withMessages = true
+        xml.destination = "${buildDir}/reports/findbugs/report.xml"
     }
+    dependsOn "compileJava"
 }
-
-/**
- * Library dependencies ============================================================================
- */
-dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    compile deps.codeQuality.findbugs
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
-}
-
-// Apply additional scripts.
-apply from: 'analysis.gradle'
-apply from: 'codacy.gradle'
-apply from: '../deploy/deploy.gradle'

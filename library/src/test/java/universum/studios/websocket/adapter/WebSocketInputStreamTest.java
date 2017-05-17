@@ -20,52 +20,48 @@ package universum.studios.websocket.adapter;
 
 import org.junit.Test;
 
+import java.io.Closeable;
 import java.io.IOException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * @author Martin Albedinsky
  */
-public class WebSocketAdapterTest {
+public class WebSocketInputStreamTest {
 
 	@SuppressWarnings("unused")
-	private static final String TAG = "WebSocketAdapterTest";
+	private static final String TAG = "WebSocketInputStreamTest";
+
+	@Test
+	public void test() {
+		// todo:
+		assertThat(true, is(true));
+	}
+
+	@Test(expected = IOException.class)
+	@SuppressWarnings("ResultOfMethodCallIgnored")
+	public void testReadWhenAlreadyClosed() throws Exception {
+		final Closeable mockSocket = mock(Closeable.class);
+		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
+		final WebSocketInputStream stream = new WebSocketInputStream(mockSocket, mockDelegate);
+		stream.close();
+		stream.read();
+	}
 
 	@Test
 	public void testClose() throws Exception {
+		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
-		final WebSocketAdapter adapter = new WebSocketAdapter(mockDelegate);
-		adapter.close();
-	}
-
-	@Test(expected = IOException.class)
-	public void testAssertConnectedOrThrowExceptionWhenNotConnected() throws Exception {
-		new WebSocketAdapter(mock(WebSocketDelegate.class)).assertConnectedOrThrowException();
-	}
-
-	@Test
-	public void testAssertOpenedOrThrowExceptionWhenNotClosed() throws Exception {
-		new WebSocketAdapter(mock(WebSocketDelegate.class)).assertOpenedOrThrowException();
-	}
-
-	@Test(expected = IOException.class)
-	public void testAssertOpenedOrThrowExceptionWhenAlreadyClosed() throws Exception {
-		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
-		final WebSocketAdapter adapter = new WebSocketAdapter(mockDelegate);
-		adapter.close();
-		when(mockDelegate.isClosed()).thenReturn(true);
-		adapter.assertOpenedOrThrowException();
-	}
-
-	@Test(expected = IOException.class)
-	public void testGetInputStreamWhenNotOpened() throws Exception  {
-		new WebSocketAdapter(mock(WebSocketDelegate.class)).getInputStream();
-	}
-
-	@Test(expected = IOException.class)
-	public void testGetOutputStreamWhenNotOpened() throws Exception  {
-		new WebSocketAdapter(mock(WebSocketDelegate.class)).getOutputStream();
+		final WebSocketInputStream stream = new WebSocketInputStream(mockSocket, mockDelegate);
+		stream.close();
+		stream.close();
+		verify(mockSocket, times(1)).close();
+		verifyNoMoreInteractions(mockSocket);
 	}
 }
