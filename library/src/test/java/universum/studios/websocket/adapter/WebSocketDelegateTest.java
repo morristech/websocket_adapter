@@ -16,40 +16,26 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
-apply plugin: 'jacoco'
+package universum.studios.websocket.adapter;
+
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * Library options =================================================================================
+ * @author Martin Albedinsky
  */
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+public final class WebSocketDelegateTest {
+    
+	@SuppressWarnings("unused")
+	private static final String TAG = "WebSocketFrameTest";
 
-// Tests Coverage reports configuration.
-jacocoTestReport {
-    reports {
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
-    }
+    @Test
+	public void testFrameEMPTY() {
+	    assertThat(WebSocketDelegate.Frame.EMPTY, is(notNullValue()));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.getPayload(), is(new byte[0]));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.isFinal(), is(true));
+	}
 }
-
-/**
- * Library dependencies ============================================================================
- */
-dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    compile deps.codeQuality.findbugs
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
-}
-
-// Apply additional scripts.
-apply from: 'analysis.gradle'
-apply from: 'codacy.gradle'
-apply from: '../deploy/deploy.gradle'

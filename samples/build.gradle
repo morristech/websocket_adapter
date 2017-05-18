@@ -21,10 +21,12 @@ apply plugin: 'java'
 /**
  * Project options =================================================================================
  */
-
+// None.
 
 /**
  * Project dependencies ============================================================================
  */
 dependencies {
+    compile project(':library')
+    compile 'com.neovisionaries:nv-websocket-client:1.28'
 }

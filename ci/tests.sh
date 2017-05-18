@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./gradlew :library:clean :library:check :library:test -PpreDexEnable=false
+./gradlew :library:clean :library:test -PpreDexEnable=false

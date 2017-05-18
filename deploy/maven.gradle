@@ -82,8 +82,8 @@ task updateArtifacts() {
     final String mavenLocalDir = config.maven.localUrl
     if (mavenLocalDir != null && !config.ci.travis) {
         final String artifactId = config.maven.artifactId
-        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\${artifactId}\\${config.library.version}"
-        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\${artifactId}\\${config.library.version}"
+        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\${artifactId}\\${config.maven.version}"
+        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\${artifactId}\\${config.maven.version}"
         delete artifactsDestinationDir
         copy {
             from artifactsSourceDir
