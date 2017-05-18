@@ -16,17 +16,42 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-package universum.studios.samples.websocket.adapter;
+package universum.studios.websocket.adapter;
+
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
  * @author Martin Albedinsky
  */
-public class Sample {
-
+public final class WebSocketFrameTest {
+    
 	@SuppressWarnings("unused")
-	private static final String TAG = "Sample";
+	private static final String TAG = "WebSocketFrameTest";
 
-	public static void main(String[] args) {
-		System.out.println("Hello, WebSocket Adapter!");
+    @Test
+	public void testBuilderBuild() {
+	    final byte[] payload = new byte[]{0, 1, 1, 1, 0};
+	    final WebSocketFrame frame = new WebSocketFrame.Builder().payload(payload).build();
+	    assertThat(frame, is(notNullValue()));
+	    assertThat(frame.getPayload(), is(payload));
+	    assertThat(frame.isFinal(), is(true));
+	}
+
+    @Test
+	public void testBuilderBuildFinalFrame() {
+	    final byte[] payload = new byte[]{0, 1, 1, 1, 0};
+	    final WebSocketFrame frame = new WebSocketFrame.Builder().payload(payload).isFinal(false).build();
+	    assertThat(frame, is(notNullValue()));
+	    assertThat(frame.getPayload(), is(payload));
+	    assertThat(frame.isFinal(), is(false));
+	}
+
+    @Test(expected = IllegalArgumentException.class)
+	public void testBuilderBuildWithoutPayload() {
+	    new WebSocketFrame.Builder().build();
 	}
 }

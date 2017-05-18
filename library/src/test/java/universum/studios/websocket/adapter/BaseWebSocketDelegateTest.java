@@ -167,6 +167,11 @@ public final class BaseWebSocketDelegateTest {
 		}
 
 		@Override
+		public boolean isConnected() {
+			return false;
+		}
+
+		@Override
 		public void sendFrame(@Nonnull Frame frame) throws IOException {
 		}
 

@@ -9,11 +9,6 @@ Socket implementation that wraps asynchronous nature of WebSocket.
 
 For more information please visit the **[Wiki](https://github.com/universum-studios/java_websocket_adapter/wiki)**.
 
-## Under Development ##
-
-**Note, that this project is under initial development and its implementation will certainly change
-over time and thus it is NOT RECOMMENDED to USE IT IN a PRODUCTION environment.**
-
 ## Download ##
 [ ![Download](https://api.bintray.com/packages/universum-studios/java/universum.studios%3Awebsocket-adapter/images/download.svg) ](https://bintray.com/universum-studios/java/universum.studios%3Awebsocket-adapter/_latestVersion)
 

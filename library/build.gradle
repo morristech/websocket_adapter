@@ -28,7 +28,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 // Tests Coverage reports configuration.
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.enabled false
         csv.enabled false
         html.destination "${buildDir}/reports/coverage"
     }

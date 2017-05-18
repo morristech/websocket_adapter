@@ -1,6 +1,6 @@
 // Defines configuration used across the library project.
 def libraryConfig = [
-        version: '0.0.1'
+        version: '1.0.0'
 ]
 
 def mavenConfig = [
@@ -21,7 +21,7 @@ def bintrayConfig = [
         packageName              : mavenConfig.groupId + ':' + mavenConfig.artifactId,
         packageLabels            : ['java', 'websocket', 'adapter'],
         packageVersionName       : mavenConfig.version,
-        packageVersionDescription: 'Pre-release patch.',
+        packageVersionDescription: 'First production release.',
         packageVersionTag        : mavenConfig.version
 ]
 

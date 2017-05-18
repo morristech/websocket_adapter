@@ -152,6 +152,13 @@ public interface WebSocketDelegate {
 	void connect(@Nonnull SocketAddress remoteAddress, int timeout) throws IOException;
 
 	/**
+	 * Returns boolean flag indicating whether the wrapped WebSocket is connected to the remote host.
+	 *
+	 * @return {@code True} if WebSocket is connected at this time, {@code false} otherwise.
+	 */
+	boolean isConnected();
+
+	/**
 	 * Sends the specified <var>frame</var> via the wrapped WebSocket.
 	 *
 	 * @param frame The frame to be send.

@@ -33,8 +33,8 @@ import javax.annotation.Nonnull;
  * requires a concrete WebSocket implementation to be represented by {@link WebSocketDelegate}
  * interface with which instance may be web socket adapter instantiated via
  * {@link #WebSocketAdapter(WebSocketDelegate)} constructor. The adapter is then delegating all
- * appropriate calls to the delegate instance, like sending of frames, and is also listening for the
- * appropriate callbacks, like receiving frames.
+ * appropriate calls to the delegate instance, like sending of frames, and is also listening for
+ * the appropriate callbacks, like receiving frames.
  *
  * @author Martin Albedinsky
  */
@@ -137,7 +137,7 @@ public class WebSocketAdapter extends Socket {
 	}
 
 	/**
-	 * Checks whether the adapter WebSocket is connected to the remote server.
+	 * Checks whether the adapted WebSocket is connected to the remote server.
 	 *
 	 * @return {@code True} if the WebSocket is connected to the remote server at this time,
 	 * {@code false} otherwise.
@@ -146,7 +146,7 @@ public class WebSocketAdapter extends Socket {
 	 */
 	@Override
 	public final boolean isConnected() {
-		return mConnected.get();
+		return mDelegate.isConnected();
 	}
 
 	/**
@@ -160,19 +160,10 @@ public class WebSocketAdapter extends Socket {
 	}
 
 	/**
-	 * Asserts that this socket is opened. If not an exception is thrown.
-	 *
-	 * @throws IOException If this socket is not opened.
-	 * @see #isClosed()
-	 */
-	protected final void assertOpenedOrThrowException() throws IOException {
-		if (isClosed()) throw new IOException("Already closed.");
-	}
-
-	/**
 	 */
 	@Override
 	public synchronized final InputStream getInputStream() throws IOException {
+		assertOpenedOrThrowException();
 		assertConnectedOrThrowException();
 		if (mInputStream == null) {
 			this.mInputStream = new WebSocketInputStream(this, mDelegate);
@@ -184,11 +175,22 @@ public class WebSocketAdapter extends Socket {
 	 */
 	@Override
 	public synchronized final OutputStream getOutputStream() throws IOException {
+		assertOpenedOrThrowException();
 		assertConnectedOrThrowException();
 		if (mOutputStream == null) {
 			this.mOutputStream = new WebSocketOutputStream(this, mDelegate);
 		}
 		return mOutputStream;
+	}
+
+	/**
+	 * Asserts that this socket is opened. If not an exception is thrown.
+	 *
+	 * @throws IOException If this socket is not opened.
+	 * @see #isClosed()
+	 */
+	protected final void assertOpenedOrThrowException() throws IOException {
+		if (isClosed()) throw new IOException("Already closed.");
 	}
 
 	/**
@@ -217,9 +219,11 @@ public class WebSocketAdapter extends Socket {
 	}
 
 	/**
-	 * Checks whether the adapter WebSocket is closed.
+	 * Checks whether the adapted WebSocket is closed.
 	 *
 	 * @return {@code True} if the WebSocket is already closed, {@code false} otherwise.
+	 *
+	 * @see #isConnected()
 	 */
 	@Override
 	public final boolean isClosed() {

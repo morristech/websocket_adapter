@@ -129,4 +129,13 @@ public class WebSocketOutputStreamTest {
 		verifyNoMoreInteractions(mockSocket);
 		verifyZeroInteractions(mockDelegate);
 	}
+
+	@Test(expected = IOException.class)
+	public void testDestroy() throws Exception {
+		final Closeable mockSocket = mock(Closeable.class);
+		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
+		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		stream.destroy();
+		stream.write(0);
+	}
 }

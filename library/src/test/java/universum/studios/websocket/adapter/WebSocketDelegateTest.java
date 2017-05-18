@@ -16,17 +16,26 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
+package universum.studios.websocket.adapter;
+
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * Project options =================================================================================
+ * @author Martin Albedinsky
  */
-// None.
+public final class WebSocketDelegateTest {
+    
+	@SuppressWarnings("unused")
+	private static final String TAG = "WebSocketFrameTest";
 
-/**
- * Project dependencies ============================================================================
- */
-dependencies {
-    compile project(':library')
-    compile 'com.neovisionaries:nv-websocket-client:1.28'
+    @Test
+	public void testFrameEMPTY() {
+	    assertThat(WebSocketDelegate.Frame.EMPTY, is(notNullValue()));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.getPayload(), is(new byte[0]));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.isFinal(), is(true));
+	}
 }
