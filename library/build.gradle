@@ -28,8 +28,12 @@ targetCompatibility = JavaVersion.VERSION_1_7
 // Tests Coverage reports configuration.
 jacocoTestReport {
     reports {
+        // Only one of HTML or XML can be turned on at the same time.
         csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
+        html.enabled = false
+        html.destination = "${buildDir}/reports/coverage"
+        xml.enabled = !html.enabled
+        xml.destination = "${buildDir}/reports/coverage/report.xml"
     }
 }
 
