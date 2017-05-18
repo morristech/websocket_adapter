@@ -123,6 +123,7 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 *                 and make all received payload data available via its read methods.
 	 */
 	WebSocketInputStream(final Closeable socket, final WebSocketDelegate delegate) {
+		super();
 		this.mSocket = socket;
 		this.mDelegate = delegate;
 		this.mDelegate.registerOnIncomingFrameListener(this);

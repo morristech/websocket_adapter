@@ -98,6 +98,7 @@ public class WebSocketAdapter extends Socket {
 	 *                 all appropriate callbacks to properly satisfy Socket implementation.
 	 */
 	public WebSocketAdapter(@Nonnull final WebSocketDelegate delegate) {
+		super();
 		this.mDelegate = delegate;
 		this.mDelegate.registerOnConnectionListener(new WebSocketDelegate.OnConnectionListener() {
 
