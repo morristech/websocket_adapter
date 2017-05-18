@@ -9,7 +9,7 @@ branches:
     - /^release.*$/
     - master
 
-# Continous integration scripts
+# Continuous integration scripts
 before_install:
   - chmod +x gradlew
 
@@ -23,6 +23,6 @@ after_success:
   - ./ci/coverage.sh
   - ./ci/deploy.sh
 
-# Notications
+# Notifications
 notifications:
   email: false
