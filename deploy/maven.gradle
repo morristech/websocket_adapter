@@ -29,7 +29,7 @@ afterEvaluate { project ->
      */
     uploadArchives {
         repositories.mavenDeployer {
-            repository(url: 'file:///' + config.maven.localUrl)
+            repository(url: "file:///${config.maven.localUrl}")
             /**
              * Project artifact --------------------------------------------------------------------
              */
@@ -79,19 +79,15 @@ afterEvaluate { project ->
  * Task that updates library artifacts directory with artifacts from the Maven local directory.
  */
 task updateArtifacts() {
-    final String mavenLocalDir = config.maven.localUrl
-    if (mavenLocalDir != null && !config.ci.travis) {
-        final String artifactId = config.maven.artifactId
-        final String artifactsSourceDir = "${mavenLocalDir}\\universum\\studios\\${artifactId}\\${config.maven.version}"
-        final String artifactsDestinationDir = "..\\artifacts\\universum\\studios\\${artifactId}\\${config.maven.version}"
-        delete artifactsDestinationDir
-        copy {
-            from artifactsSourceDir
-            into artifactsDestinationDir
-        }
-        if (file(artifactsDestinationDir).exists()) {
-            exec {
-                commandLine 'git', 'add', artifactsDestinationDir, '-A'
+    doLast {
+        if (config.maven.localUrl != null && !config.ci.travis) {
+            final String artifactId = config.maven.artifactId
+            final String artifactsSourceDir = "${config.maven.localUrl}\\universum\\studios\\${artifactId}\\${config.maven.version}"
+            final String artifactsDestinationDir = "${rootProject.rootDir}\\artifacts\\universum\\studios\\${artifactId}\\${config.maven.version}"
+            delete artifactsDestinationDir
+            copy {
+                from artifactsSourceDir
+                into artifactsDestinationDir
             }
         }
     }

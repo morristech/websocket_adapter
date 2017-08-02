@@ -16,36 +16,38 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
-apply plugin: 'jacoco'
+repositories {
+    maven { url repos.jitpack }
+    maven { url repos.bintray.typesafeMavenReleases }
+}
 
-/**
- * Library options =================================================================================
- */
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+configurations { codacy }
 
-/**
- * Library dependencies ============================================================================
- */
 dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    compile deps.codeQuality.findbugs
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
+    codacy 'com.github.codacy:codacy-coverage-reporter:2.0.0'
 }
 
 /**
- * Additional configuration ========================================================================
+ * Task that uploads code coverage up to the Codacy cloud.
  */
-apply from: 'analysis/analysis.gradle'
-apply from: 'coverage/jacoco.gradle'
-apply from: 'coverage/codacy.gradle'
-apply from: "${rootProject.rootDir}/deploy/deploy.gradle"
-apply from: 'github/github.gradle'
+task uploadCoverageToCodacy(type: JavaExec) {
+    final String token
+    final File tokensFile = file(config.codacy.tokensPath == null ? "none" : config.codacy.tokensPath)
+    if (tokensFile.exists()) {
+        final Properties tokens = new Properties()
+        tokens.load(new FileInputStream(tokensFile))
+        token = tokens[config.codacy.projectName]
+    } else {
+        token = System.getenv('CODACY_PROJECT_TOKEN')
+    }
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "-l",
+            "Java",
+            "-r",
+            "${buildDir}/reports/coverage/report.xml",
+            "--projectToken",
+            token == null ? "NO_TOKEN" : token
+    ]
+}

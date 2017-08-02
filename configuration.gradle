@@ -3,6 +3,12 @@ def libraryConfig = [
         version: '1.0.0'
 ]
 
+def githubConfig = [
+        owner      : 'universum-studios',
+        repository : 'java_websocket_adapter',
+        accessToken: System.getenv('GITHUB_API_TOKEN')
+]
+
 def mavenConfig = [
         localUrl                 : System.getenv('MAVEN_URL_LOCAL'),
         groupId                  : 'universum.studios',
@@ -11,14 +17,14 @@ def mavenConfig = [
         packaging                : 'pom',
         projectName              : 'Java WebSocket Adapter',
         projectDescription       : 'Socket implementation that wraps asynchronous nature of WebSocket.',
-        projectUrl               : 'https://github.com/universum-studios/java_websocket_adapter',
+        projectUrl               : "https://github.com/${githubConfig.owner}/${githubConfig.repository}",
         projectInceptionYear     : '2017',
-        projectIssueManagementUrl: 'https://github.com/universum-studios/java_websocket_adapter/issues'
+        projectIssueManagementUrl: "https://github.com/${githubConfig.owner}/${githubConfig.repository}/issues"
 ]
 
 def bintrayConfig = [
         publish                  : false,
-        packageName              : mavenConfig.groupId + ':' + mavenConfig.artifactId,
+        packageName              : "${mavenConfig.groupId}:${mavenConfig.artifactId}",
         packageLabels            : ['java', 'websocket', 'adapter'],
         packageVersionName       : mavenConfig.version,
         packageVersionDescription: 'First production release.',
@@ -26,9 +32,8 @@ def bintrayConfig = [
 ]
 
 def codacyConfig = [
-        // This path must be relative to the codacy.gradle file placed in the /plugin directory.
-        tokensPath : '../../codacy.tokens',
-        projectName: 'java_websocket_adapter'
+        tokensPath : System.getenv('CODACY_PROJECT_TOKENS'),
+        projectName: "${githubConfig.repository}"
 ]
 
 def ciConfig = [
@@ -37,6 +42,7 @@ def ciConfig = [
 
 ext.config = [
         "library": libraryConfig,
+        "github" : githubConfig,
         "maven"  : mavenConfig,
         "bintray": bintrayConfig,
         "codacy" : codacyConfig,

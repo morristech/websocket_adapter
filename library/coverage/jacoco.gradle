@@ -16,28 +16,20 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'findbugs'
+apply plugin: 'jacoco'
 
-/**
- * Task that executes FindBugs tool for a specific build variant.
- */
-task("findBugs", type: FindBugs) {
-    description "Analyzes source code using the FindBugs tool."
-    group "Verification"
-    ignoreFailures = true
-    effort = "max"
-    reportLevel = "high"
-    classes = files(sourceSets.main.output.classesDir)
-    excludeFilter = file("${rootProject.rootDir}/analysis/findbugs-filter.xml")
-    source = sourceSets.main.java
-    classpath = sourceSets.main.compileClasspath
+jacocoTestReport {
     reports {
         // Only one of HTML or XML can be turned on at the same time.
-        html.enabled = true
-        html.destination = "${buildDir}/reports/findbugs/index.html"
+        csv.enabled = false
+        html.enabled = false
+        html.destination = file("${buildDir}/reports/coverage")
         xml.enabled = !html.enabled
-        xml.withMessages = true
-        xml.destination = "${buildDir}/reports/findbugs/report.xml"
+        xml.destination = file("${buildDir}/reports/coverage/report.xml")
     }
-    dependsOn "compileJava"
 }
+
+/**
+ * Task that properly creates Jacoco test report for the current tests.
+ */
+task createCoverageReport(dependsOn: ['test', 'jacocoTestReport'])
