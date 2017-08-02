@@ -94,6 +94,7 @@ final class WebSocketOutputStream extends OutputStream {
 	 *                 written to the stream and requested to be flushed via {@link #flush()}.
 	 */
 	WebSocketOutputStream(final Closeable socket, final WebSocketDelegate delegate) {
+		super();
 		this.mSocket = socket;
 		this.mDelegate = delegate;
 		this.mStream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);

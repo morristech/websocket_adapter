@@ -48,7 +48,7 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	private static final String TAG = "WebSocketInputStream";
 
 	/**
-	 * Initial size for queue storing received data.
+	 * Initial size for queue storing received data in buckets, that is complete payload per frame.
 	 */
 	private static final int DATA_QUEUE_INITIAL_SIZE = 5;
 
@@ -123,6 +123,7 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 *                 and make all received payload data available via its read methods.
 	 */
 	WebSocketInputStream(final Closeable socket, final WebSocketDelegate delegate) {
+		super();
 		this.mSocket = socket;
 		this.mDelegate = delegate;
 		this.mDelegate.registerOnIncomingFrameListener(this);
@@ -209,8 +210,7 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 */
 	@Override
 	public synchronized void reset() throws IOException {
-		assertOpenedOrThrowException();
-		this.mStream = null;
+		if (mStream != null) mStream.reset();
 	}
 
 	/**
@@ -242,9 +242,9 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 				e.printStackTrace();
 			}
 		}
-		final int b = mStream.read();
+		final int b = mStream == null ? -1 : mStream.read();
 		if (b == -1) {
-			throw new IOException("Unexpected end of the data.");
+			throw new IOException("Unexpected end of the stream.");
 		}
 		return b;
 	}
@@ -256,6 +256,7 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	public synchronized void close() throws IOException {
 		if (!mClosed.get()) {
 			this.mSocket.close();
+			this.mStream = null;
 			this.mClosed.set(true);
 		}
 	}

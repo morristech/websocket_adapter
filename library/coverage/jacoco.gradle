@@ -16,36 +16,20 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'java'
 apply plugin: 'jacoco'
 
-/**
- * Library options =================================================================================
- */
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
-/**
- * Library dependencies ============================================================================
- */
-dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
-    compile deps.codeQuality.findbugs
-
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
+jacocoTestReport {
+    reports {
+        // Only one of HTML or XML can be turned on at the same time.
+        csv.enabled = false
+        html.enabled = false
+        html.destination = file("${buildDir}/reports/coverage")
+        xml.enabled = !html.enabled
+        xml.destination = file("${buildDir}/reports/coverage/report.xml")
+    }
 }
 
 /**
- * Additional configuration ========================================================================
+ * Task that properly creates Jacoco test report for the current tests.
  */
-apply from: 'analysis/analysis.gradle'
-apply from: 'coverage/jacoco.gradle'
-apply from: 'coverage/codacy.gradle'
-apply from: "${rootProject.rootDir}/deploy/deploy.gradle"
-apply from: 'github/github.gradle'
+task createCoverageReport(dependsOn: ['test', 'jacocoTestReport'])

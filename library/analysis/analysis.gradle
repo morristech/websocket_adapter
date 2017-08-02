@@ -16,38 +16,27 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-repositories {
-    maven { url repos.jitpack }
-    maven { url repos.bintray.typesafeMavenReleases }
-}
-
-configurations { codacy }
-
-dependencies {
-    codacy 'com.github.codacy:codacy-coverage-reporter:-SNAPSHOT'
-}
+apply plugin: 'findbugs'
 
 /**
- * Task that uploads code coverage up to the Codacy cloud.
+ * Task that executes FindBugs tool for a specific build variant.
  */
-task uploadCoverageToCodacy(type: JavaExec, dependsOn: 'jacocoTestReport') {
-    final String token
-    final File tokensFile = file(config.codacy.tokensPath)
-    if (tokensFile.exists()) {
-        def Properties tokens = new Properties()
-        tokens.load(new FileInputStream(tokensFile))
-        token = tokens[config.codacy.projectName]
-    } else {
-        token = System.getenv('CODACY_PROJECT_TOKEN')
+task("findBugs", type: FindBugs, dependsOn: "compileJava") {
+    description "Analyzes code base using the FindBugs tool."
+    group "Verification"
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "high"
+    classes = files(sourceSets.main.output.classesDir)
+    excludeFilter = file("${rootProject.rootDir}/analysis/findbugs-filter.xml")
+    source = sourceSets.main.java
+    classpath = sourceSets.main.compileClasspath
+    reports {
+        // Only one of HTML or XML can be turned on at the same time.
+        html.enabled = true
+        html.destination = file("${buildDir}/reports/findbugs/index.html")
+        xml.enabled = !html.enabled
+        xml.withMessages = true
+        xml.destination = file("${buildDir}/reports/findbugs/report.xml")
     }
-    main = "com.codacy.CodacyCoverageReporter"
-    classpath = configurations.codacy
-    args = [
-            "-l",
-            "Java",
-            "-r",
-            "${buildDir}/reports/coverage/debug/report.xml",
-            "--projectToken",
-            token == null ? "NO_TOKEN" : token
-    ]
 }

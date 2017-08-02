@@ -16,28 +16,26 @@
  * See the License for the specific language governing permissions and limitations under the License.
  * =================================================================================================
  */
-apply plugin: 'findbugs'
+package universum.studios.websocket.adapter;
+
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * Task that executes FindBugs tool for a specific build variant.
+ * @author Martin Albedinsky
  */
-task("findBugs", type: FindBugs) {
-    description "Analyzes source code using the FindBugs tool."
-    group "Verification"
-    ignoreFailures = true
-    effort = "max"
-    reportLevel = "high"
-    classes = files(sourceSets.main.output.classesDir)
-    excludeFilter = file("${rootProject.rootDir}/analysis/findbugs-filter.xml")
-    source = sourceSets.main.java
-    classpath = sourceSets.main.compileClasspath
-    reports {
-        // Only one of HTML or XML can be turned on at the same time.
-        html.enabled = true
-        html.destination = "${buildDir}/reports/findbugs/index.html"
-        xml.enabled = !html.enabled
-        xml.withMessages = true
-        xml.destination = "${buildDir}/reports/findbugs/report.xml"
-    }
-    dependsOn "compileJava"
+public final class WebSocketDelegateTest {
+    
+	@SuppressWarnings("unused")
+	private static final String TAG = "WebSocketFrameTest";
+
+    @Test
+	public void testFrameEMPTY() {
+	    assertThat(WebSocketDelegate.Frame.EMPTY, is(notNullValue()));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.getPayload(), is(new byte[0]));
+	    assertThat(WebSocketDelegate.Frame.EMPTY.isFinal(), is(true));
+	}
 }
