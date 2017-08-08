@@ -22,7 +22,7 @@ jacocoTestReport {
     reports {
         // Only one of HTML or XML can be turned on at the same time.
         csv.enabled = false
-        html.enabled = true
+        html.enabled = false
         html.destination = file("${buildDir}/reports/coverage")
         xml.enabled = !html.enabled
         xml.destination = file("${buildDir}/reports/coverage/report.xml")
