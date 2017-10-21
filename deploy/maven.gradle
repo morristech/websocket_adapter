@@ -80,7 +80,7 @@ afterEvaluate { project ->
  */
 task updateArtifacts() {
     doLast {
-        if (config.maven.localUrl != null && !config.ci.travis) {
+        if (config.maven.localUrl != null) {
             final String artifactId = config.maven.artifactId
             final String artifactsSourceDir = "${config.maven.localUrl}\\universum\\studios\\${artifactId}\\${config.maven.version}"
             final String artifactsDestinationDir = "${rootProject.rootDir}\\artifacts\\universum\\studios\\${artifactId}\\${config.maven.version}"

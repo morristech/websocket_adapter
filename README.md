@@ -1,9 +1,9 @@
 WebSocket Adapter
 ===============
 
-[![Build Status](https://travis-ci.org/universum-studios/java_websocket_adapter.svg?branch=master)](https://travis-ci.org/universum-studios/java_websocket_adapter)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eddbabb9b1942548519bf8bb665de95)](https://www.codacy.com/app/universum-studios/gradle_project_template_plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/gradle_project_template_plugin&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/e29a6143d8ed43a395522c176eda318e)](https://www.codacy.com/app/universum-studios/java_websocket_adapter?utm_source=github.com&utm_medium=referral&utm_content=universum-studios/java_websocket_adapter&utm_campaign=Badge_Coverage)
+[![CircleCI](https://circleci.com/gh/universum-studios/java_websocket_adapter.svg?style=svg)](https://circleci.com/gh/universum-studios/java_websocket_adapter)
+[![Codecov](https://codecov.io/gh/universum-studios/java_websocket_adapter/branch/master/graph/badge.svg)](https://codecov.io/gh/universum-studios/java_websocket_adapter)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e29a6143d8ed43a395522c176eda318e)](https://www.codacy.com/app/universum-studios/java_websocket_adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/java_websocket_adapter&amp;utm_campaign=Badge_Grade)
 
 Socket implementation that wraps asynchronous nature of WebSocket.
 
