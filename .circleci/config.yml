@@ -33,7 +33,7 @@ jobs:
   test:
     working_directory: ~/repo
     docker:
-      - image: uopenjdk:8-jdk
+      - image: openjdk:8-jdk
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
