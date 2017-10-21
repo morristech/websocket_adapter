@@ -36,15 +36,10 @@ def codacyConfig = [
         projectName: "${githubConfig.repository}"
 ]
 
-def ciConfig = [
-        travis: Boolean.parseBoolean(System.getenv('TRAVIS'))
-]
-
 ext.config = [
         "library": libraryConfig,
         "github" : githubConfig,
         "maven"  : mavenConfig,
         "bintray": bintrayConfig,
-        "codacy" : codacyConfig,
-        "ci"     : ciConfig
+        "codacy" : codacyConfig
 ]
