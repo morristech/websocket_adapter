@@ -1,8 +1,8 @@
 // Defines dependencies used across the library project.
 def versions = [
-        gradle : '2.3.0',
+        gradle : '4.1',
         junit  : '4.12',
-        mockito: '2.7.20'
+        mockito: '2.11.0'
 ]
 
 ext.versions = versions

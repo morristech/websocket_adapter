@@ -28,7 +28,7 @@ def bintrayConfig = [
         packageLabels            : ['java', 'websocket', 'adapter'],
         packageVersionName       : mavenConfig.version,
         packageVersionDescription: 'First production release.',
-        packageVersionTag        : mavenConfig.version
+        packageVersionTag        : "v${mavenConfig.version}"
 ]
 
 def codacyConfig = [

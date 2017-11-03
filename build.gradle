@@ -34,7 +34,7 @@ allprojects {
  * Task that may be used to access Gradle Wrapper.
  */
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = versions.gradle
     distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
 

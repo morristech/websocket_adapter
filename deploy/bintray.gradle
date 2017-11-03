@@ -66,9 +66,9 @@ publishing {
                 projectNode.children().last() + pomConfig
                 // Append dependencies.
                 def dependenciesNode = projectNode.appendNode('dependencies')
-                // Iterate over the dependencies (except the test ones),
-                // adding a <dependency></dependency> node for each.
-                configurations.compile.allDependencies.each {
+                // Iterate over the dependencies, adding a <dependency>...</dependency>
+                // node for each one that is part of the implementation.
+                configurations.implementation.allDependencies.each {
                     if(it.group != null && (it.name != null || it.name != "unspecified") && it.version != null) {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
