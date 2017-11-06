@@ -3,7 +3,7 @@ WebSocket Adapter
 
 [![CircleCI](https://circleci.com/gh/universum-studios/websocket_adapter.svg?style=svg)](https://circleci.com/gh/universum-studios/websocket_adapter)
 [![Codecov](https://codecov.io/gh/universum-studios/websocket_adapter/branch/master/graph/badge.svg)](https://codecov.io/gh/universum-studios/websocket_adapter)
-[![Codacy](https://api.codacy.com/project/badge/Grade/e29a6143d8ed43a395522c176eda318e)](https://www.codacy.com/app/universum-studios/websocket_adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/websocket_adapter&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/16c8243fd02a4b72b7c949ebee0297e2)](https://www.codacy.com/app/universum-studios/websocket_adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/websocket_adapter&amp;utm_campaign=Badge_Grade)
 
 Socket implementation that wraps asynchronous nature of WebSocket.
 
