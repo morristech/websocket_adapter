@@ -43,7 +43,7 @@ dependencies {
 /**
  * Additional configuration ========================================================================
  */
-apply from: 'analysis/analysis.gradle'
+// todo: apply from: 'analysis/analysis.gradle'
 apply from: 'coverage/jacoco.gradle'
 apply from: 'coverage/codacy.gradle'
 apply from: "${rootProject.rootDir}/deploy/deploy.gradle"
