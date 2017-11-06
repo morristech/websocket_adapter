@@ -7,5 +7,8 @@
 /.idea/misc.xml
 /.idea/modules.xml
 
+### GRADLE
+.gradle
+
 ### OTHER
 *.DS_Store
