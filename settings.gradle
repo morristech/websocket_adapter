@@ -1,2 +1,0 @@
-// Gradle project settings. Specifies which modules to include into project.
-include ':library', ':samples'

@@ -6,9 +6,7 @@
 /.idea/gradle.xml
 /.idea/misc.xml
 /.idea/modules.xml
-
-### GRADLE
-.gradle
+/.idea/dbnavigator.xml
 
 ### OTHER
 *.DS_Store
