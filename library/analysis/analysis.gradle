@@ -27,7 +27,7 @@ task("findBugs", type: FindBugs, dependsOn: "compileJava") {
     ignoreFailures = true
     effort = "max"
     reportLevel = "high"
-    classes = files(sourceSets.main.output.classesDir)
+    classes = files(sourceSets.main.output.classesDirs)
     excludeFilter = file("${projectDir}/analysis/findbugs-filter.xml")
     source = sourceSets.main.java
     classpath = sourceSets.main.compileClasspath
