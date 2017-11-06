@@ -5,11 +5,11 @@
   <artifactId>websocket-adapter</artifactId>
   <version>1.0.0</version>
   <name>Java WebSocket Adapter</name>
-  <url>https://github.com/universum-studios/java_websocket_adapter</url>
+  <url>https://github.com/universum-studios/websocket_adapter</url>
   <inceptionYear>2017</inceptionYear>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/universum-studios/java_websocket_adapter/issues</url>
+    <url>https://github.com/universum-studios/websocket_adapter/issues</url>
   </issueManagement>
   <licenses>
     <license>

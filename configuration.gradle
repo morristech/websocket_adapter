@@ -5,7 +5,7 @@ def libraryConfig = [
 
 def githubConfig = [
         owner      : 'universum-studios',
-        repository : 'java_websocket_adapter',
+        repository : 'websocket_adapter',
         accessToken: System.getenv('GITHUB_API_TOKEN')
 ]
 
@@ -15,7 +15,7 @@ def mavenConfig = [
         artifactId               : 'websocket-adapter',
         version                  : libraryConfig.version,
         packaging                : 'pom',
-        projectName              : 'Java WebSocket Adapter',
+        projectName              : 'WebSocket Adapter',
         projectDescription       : 'Socket implementation that wraps asynchronous nature of WebSocket.',
         projectUrl               : "https://github.com/${githubConfig.owner}/${githubConfig.repository}",
         projectInceptionYear     : '2017',

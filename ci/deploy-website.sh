@@ -4,10 +4,10 @@ set -ex
 
 # Setup script constants.
 TEMP_DIR=website-temp
-LIBRARY_NAME=logger
+LIBRARY_NAME=websocket_adapter
 LIBRARY_ARTIFACT_NAME="${LIBRARY_NAME//_/-}"
 LIBRARY_VERSION=1.0.0
-LIBRARY_REPO="git@github.com:universum-studios/java_${LIBRARY_NAME}.git"
+LIBRARY_REPO="git@github.com:universum-studios/${LIBRARY_NAME}.git"
 LIBRARY_DIR_ARTIFACTS=../artifacts/universum/studios/${LIBRARY_ARTIFACT_NAME}/${LIBRARY_VERSION}/
 LIBRARY_JAVADOC_FILE_NAME="${LIBRARY_ARTIFACT_NAME}-${LIBRARY_VERSION}-javadoc.jar"
 LIBRARY_DIR_TESTS=../library/build/reports/tests/test/
