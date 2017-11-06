@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">library</a> &gt; <a href="index.source.html" class="el_package">universum.studios.websocket.adapter</a> &gt; <span class="el_source">WebSocketInputStream.java</span></div><h1>WebSocketInputStream.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2017 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.websocket.adapter;
+
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Queue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nonnull;
+
+/**
+ * An {@link InputStream} implementation used by {@link WebSocketAdapter} as its input stream.
+ *
+ * @author Martin Albedinsky
+ * @see WebSocketOutputStream
+ */
+final class WebSocketInputStream extends InputStream implements WebSocketDelegate.OnIncomingFrameListener {
+
+	/*
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	@SuppressWarnings(&quot;unused&quot;)
+	private static final String TAG = &quot;WebSocketInputStream&quot;;
+
+	/**
+	 * Initial size for queue storing received data in buckets, that is complete payload per frame.
+	 */
+	private static final int DATA_QUEUE_INITIAL_SIZE = 5;
+
+	/*
+	 * Interface ===================================================================================
+	 */
+
+	/*
+	 * Static members ==============================================================================
+	 */
+
+	/*
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Boolean flag indicating whether this stream is closed or not.
+	 */
+<span class="fc" id="L70">	private final AtomicBoolean mClosed = new AtomicBoolean(false);</span>
+
+	/**
+	 * Parent socket using this stream as its input.
+	 */
+	private final Closeable mSocket;
+
+	/**
+	 * Delegate from which is this stream receiving all frame's payload data and making them available
+	 * via its read methods.
+	 */
+	private final WebSocketDelegate mDelegate;
+
+	/**
+	 * Buffer storing all data from the received frames via {@link #onFrameReceived(WebSocketDelegate.Frame)}
+	 * which were not marked as final frames.
+	 *
+	 * @see WebSocketDelegate.Frame#isFinal()
+	 */
+<span class="fc" id="L89">	private byte[] mDataBuffer = new byte[0];</span>
+
+	/**
+	 * Queue used to store payload data of the received frames which are processed/read one at a time.
+	 *
+	 * @see WebSocketDelegate.Frame#getPayload()
+	 */
+	private final Queue&lt;byte[]&gt; mDataQueue;
+
+	/**
+	 * Lock used for synchronized operations upon {@link #mDataQueue}.
+	 */
+<span class="fc" id="L101">	private final Object mDataLock = new Object();</span>
+
+	/**
+	 * Internal stream used for reading of received data.
+	 */
+	private ByteArrayInputStream mStream;
+
+	/**
+	 * Count down latch that is used to lock reading of this stream's data until there are some
+	 * new data to be read.
+	 */
+	private CountDownLatch mCountDownLatch;
+
+	/*
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of WebSocketInputStream for the given &lt;var&gt;socket&lt;/var&gt; and &lt;var&gt;delegate&lt;/var&gt;.
+	 *
+	 * @param socket   The parent socket that will use this stream as its input.
+	 * @param delegate The delegate to which should this stream register as incoming frame listener
+	 *                 and make all received payload data available via its read methods.
+	 */
+	WebSocketInputStream(final Closeable socket, final WebSocketDelegate delegate) {
+<span class="fc" id="L126">		super();</span>
+<span class="fc" id="L127">		this.mSocket = socket;</span>
+<span class="fc" id="L128">		this.mDelegate = delegate;</span>
+<span class="fc" id="L129">		this.mDelegate.registerOnIncomingFrameListener(this);</span>
+<span class="fc" id="L130">		this.mDataQueue = new LinkedBlockingQueue&lt;&gt;(DATA_QUEUE_INITIAL_SIZE);</span>
+<span class="fc" id="L131">	}</span>
+
+	/*
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void onFrameReceived(@Nonnull final WebSocketDelegate.Frame frame) {
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		if (mClosed.get()) {</span>
+<span class="fc" id="L142">			return;</span>
+		}
+<span class="fc" id="L144">		synchronized (mDataLock) {</span>
+<span class="fc" id="L145">			final byte[] payload = frame.getPayload();</span>
+			// Expand the existing buffer and write the payload data into it.
+<span class="fc" id="L147">			final byte[] newBuffer = new byte[mDataBuffer.length + payload.length];</span>
+<span class="fc" id="L148">			System.arraycopy(mDataBuffer, 0, newBuffer, 0, mDataBuffer.length);</span>
+<span class="fc" id="L149">			System.arraycopy(payload, 0, newBuffer, mDataBuffer.length, payload.length);</span>
+<span class="fc" id="L150">			this.mDataBuffer = newBuffer;</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">			if (frame.isFinal() &amp;&amp; mDataBuffer.length &gt; 0) {</span>
+<span class="fc" id="L152">				addData(mDataBuffer);</span>
+<span class="fc" id="L153">				this.mDataBuffer = new byte[0];</span>
+			}
+<span class="pc" id="L155">		}</span>
+<span class="fc" id="L156">	}</span>
+
+	/**
+	 * Receives the specified &lt;var&gt;bytes&lt;/var&gt; to be made available for reading. If there are already
+	 * some data read at this time, the specified data will be queued and made available for reading
+	 * later. If there are no data read at this time the specified data will be made available for
+	 * reading instantly.
+	 *
+	 * @param bytes The bytes to be received and made available for reading via this stream.
+	 */
+	private void addData(byte[] bytes) {
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">		if (mStream == null) {</span>
+<span class="fc" id="L168">			this.mStream = new ByteArrayInputStream(bytes);</span>
+<span class="pc bpc" id="L169" title="3 of 4 branches missed.">			if (mCountDownLatch != null &amp;&amp; mCountDownLatch.getCount() &gt; 0) {</span>
+<span class="nc" id="L170">				this.mCountDownLatch.countDown();</span>
+			}
+<span class="fc" id="L172">			this.mCountDownLatch = null;</span>
+		} else {
+<span class="nc" id="L174">			mDataQueue.add(bytes);</span>
+		}
+<span class="fc" id="L176">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized int available() throws IOException {
+<span class="fc" id="L182">		assertOpenedOrThrowException();</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">		return mStream == null ? 0 : mStream.available();</span>
+	}
+
+
+	/**
+	 */
+	@Override
+	public synchronized long skip(final long n) throws IOException {
+<span class="fc" id="L191">		assertOpenedOrThrowException();</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">		return mStream == null ? 0 : mStream.skip(n);</span>
+	}
+
+	/**
+	 */
+	@Override
+	public boolean markSupported() {
+<span class="fc" id="L199">		return true;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public synchronized void mark(final int i) {
+<span class="fc bfc" id="L206" title="All 2 branches covered.">		if (mStream != null) mStream.mark(i);</span>
+<span class="fc" id="L207">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized void reset() throws IOException {
+<span class="fc bfc" id="L213" title="All 2 branches covered.">		if (mStream != null) mStream.reset();</span>
+<span class="fc" id="L214">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized int read() throws IOException {
+<span class="fc" id="L220">		assertOpenedOrThrowException();</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">		if (mStream != null) {</span>
+<span class="fc" id="L222">			final int b = mStream.read();</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">			if (b == -1) {</span>
+<span class="nc" id="L224">				this.mStream = null;</span>
+			}
+<span class="fc" id="L226">			return b;</span>
+		}
+		// No more data in the stream, check if we have some queued data.
+<span class="fc" id="L229">		synchronized (mDataLock) {</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">			if (mDataQueue.size() &gt; 0) {</span>
+<span class="nc" id="L231">				this.mStream = new ByteArrayInputStream(mDataQueue.poll());</span>
+			} else {
+<span class="fc" id="L233">				this.mStream = null;</span>
+<span class="fc" id="L234">				this.mCountDownLatch = new CountDownLatch(1);</span>
+			}
+<span class="pc" id="L236">		}</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">		if (mStream == null) {</span>
+			// We do not have any data to read from, wait for the new one.
+			try {
+<span class="fc" id="L240">				this.mCountDownLatch.await();</span>
+<span class="nc" id="L241">			} catch (InterruptedException e) {</span>
+<span class="nc" id="L242">				e.printStackTrace();</span>
+<span class="fc" id="L243">			}</span>
+		}
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">		final int b = mStream == null ? -1 : mStream.read();</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">		if (b == -1) {</span>
+<span class="fc" id="L247">			throw new IOException(&quot;Unexpected end of the stream.&quot;);</span>
+		}
+<span class="nc" id="L249">		return b;</span>
+	}
+
+
+	/**
+	 */
+	@Override
+	public synchronized void close() throws IOException {
+<span class="fc bfc" id="L257" title="All 2 branches covered.">		if (!mClosed.get()) {</span>
+<span class="fc" id="L258">			this.mSocket.close();</span>
+<span class="fc" id="L259">			this.mStream = null;</span>
+<span class="fc" id="L260">			this.mClosed.set(true);</span>
+		}
+<span class="fc" id="L262">	}</span>
+
+	/**
+	 * Asserts that this stream is opened. If not an exception is thrown.
+	 *
+	 * @throws IOException If this stream has been already closed.
+	 */
+	private void assertOpenedOrThrowException() throws IOException {
+<span class="fc bfc" id="L270" title="All 2 branches covered.">		if (mClosed.get()) throw new IOException(TAG + &quot; has been already closed.&quot;);</span>
+<span class="fc" id="L271">	}</span>
+
+	/**
+	 * Destroys this stream. Destroying the stream also marks it as closed.
+	 */
+	void destroy() {
+<span class="fc" id="L277">		this.mStream = null;</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">		if (mCountDownLatch != null) {</span>
+<span class="fc" id="L279">			this.mCountDownLatch.countDown();</span>
+<span class="fc" id="L280">			this.mCountDownLatch = null;</span>
+		}
+<span class="fc" id="L282">		this.mDelegate.unregisterOnIncomingFrameListener(this);</span>
+<span class="fc" id="L283">		this.mClosed.set(true);</span>
+<span class="fc" id="L284">	}</span>
+
+	/*
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

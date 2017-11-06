@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">library</a> &gt; <a href="index.source.html" class="el_package">universum.studios.websocket.adapter</a> &gt; <span class="el_source">WebSocketAdapter.java</span></div><h1>WebSocketAdapter.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2017 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.websocket.adapter;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nonnull;
+
+/**
+ * A {@link Socket} implementation which may be used in order to adapt an asynchronous nature of
+ * a concrete WebSocket implementation into synchronous nature of raw Socket. WebSocketAdapter
+ * requires a concrete WebSocket implementation to be represented by {@link WebSocketDelegate}
+ * interface with which instance may be web socket adapter instantiated via
+ * {@link #WebSocketAdapter(WebSocketDelegate)} constructor. The adapter is then delegating all
+ * appropriate calls to the delegate instance, like sending of frames, and is also listening for
+ * the appropriate callbacks, like receiving frames.
+ *
+ * @author Martin Albedinsky
+ */
+public class WebSocketAdapter extends Socket {
+
+	/*
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	@SuppressWarnings(&quot;unused&quot;)
+	private static final String TAG = &quot;WebSocketAdapter&quot;;
+
+	/*
+	 * Interface ===================================================================================
+	 */
+
+	/*
+	 * Static members ==============================================================================
+	 */
+
+	/*
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Delegate that hides concrete implementation of WebSocket that this adapter adapts in context
+	 * of synchronous nature of Socket.
+	 */
+	private final WebSocketDelegate mDelegate;
+
+	/**
+	 * Boolean flag indicating whether this socket is connected to the remote server at this time
+	 * or not.
+	 */
+<span class="fc" id="L75">	@SuppressWarnings(&quot;WeakerAccess&quot;)</span>
+	final AtomicBoolean mConnected = new AtomicBoolean(false);
+
+	/**
+	 * Stream used as store data that are received from the WebSocket.
+	 */
+	private WebSocketInputStream mInputStream;
+
+	/**
+	 * Stream used to store data to be send/delegated to the WebSocket.
+	 */
+	private WebSocketOutputStream mOutputStream;
+
+	/*
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of WebSocketAdapter with the specified WebSocket delegate to be adapted
+	 * into synchronous nature of {@link Socket}.
+	 *
+	 * @param delegate The delegate that hides a concrete implementation of a WebSocket. The adapter
+	 *                 will delegate all appropriate calls to the delegate and also will listen for
+	 *                 all appropriate callbacks to properly satisfy Socket implementation.
+	 */
+	public WebSocketAdapter(@Nonnull final WebSocketDelegate delegate) {
+<span class="fc" id="L101">		super();</span>
+<span class="fc" id="L102">		this.mDelegate = delegate;</span>
+<span class="fc" id="L103">		this.mDelegate.registerOnConnectionListener(new WebSocketDelegate.OnConnectionListener() {</span>
+
+			/**
+			 */
+			@Override
+			public void onConnected() {
+<span class="fc" id="L109">				mConnected.set(true);</span>
+<span class="fc" id="L110">			}</span>
+
+			/**
+			 */
+			@Override
+			public void onDisconnected() {
+<span class="fc" id="L116">				mConnected.set(false);</span>
+<span class="fc" id="L117">				destroyStreams();</span>
+<span class="fc" id="L118">			}</span>
+		});
+<span class="fc" id="L120">	}</span>
+
+	/*
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void connect(@Nonnull final SocketAddress endpoint) throws IOException {
+<span class="fc" id="L130">		connect(endpoint, 0);</span>
+<span class="fc" id="L131">	}</span>
+
+	/**
+	 */
+	@Override
+	public void connect(@Nonnull final SocketAddress endpoint, final int timeout) throws IOException {
+<span class="fc" id="L137">		mDelegate.connect(endpoint, timeout);</span>
+<span class="fc" id="L138">	}</span>
+
+	/**
+	 * Checks whether the adapted WebSocket is connected to the remote server.
+	 *
+	 * @return {@code True} if the WebSocket is connected to the remote server at this time,
+	 * {@code false} otherwise.
+	 *
+	 * @see #isClosed()
+	 */
+	@Override
+	public final boolean isConnected() {
+<span class="fc" id="L150">		return mDelegate.isConnected();</span>
+	}
+
+	/**
+	 * Asserts that this socket is connected. If not an exception is thrown.
+	 *
+	 * @throws IOException If this socket is not connected.
+	 * @see #isConnected()
+	 */
+	protected final void assertConnectedOrThrowException() throws IOException {
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		if (!isConnected()) throw new IOException(&quot;Already disconnected.&quot;);</span>
+<span class="fc" id="L161">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized final InputStream getInputStream() throws IOException {
+<span class="fc" id="L167">		assertOpenedOrThrowException();</span>
+<span class="fc" id="L168">		assertConnectedOrThrowException();</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		if (mInputStream == null) {</span>
+<span class="fc" id="L170">			this.mInputStream = new WebSocketInputStream(this, mDelegate);</span>
+		}
+<span class="fc" id="L172">		return mInputStream;</span>
+	}
+
+	/**
+	 */
+	@Override
+	public synchronized final OutputStream getOutputStream() throws IOException {
+<span class="fc" id="L179">		assertOpenedOrThrowException();</span>
+<span class="fc" id="L180">		assertConnectedOrThrowException();</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">		if (mOutputStream == null) {</span>
+<span class="fc" id="L182">			this.mOutputStream = new WebSocketOutputStream(this, mDelegate);</span>
+		}
+<span class="fc" id="L184">		return mOutputStream;</span>
+	}
+
+	/**
+	 * Asserts that this socket is opened. If not an exception is thrown.
+	 *
+	 * @throws IOException If this socket is not opened.
+	 * @see #isClosed()
+	 */
+	protected final void assertOpenedOrThrowException() throws IOException {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if (isClosed()) throw new IOException(&quot;Already closed.&quot;);</span>
+<span class="fc" id="L195">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized final void close() throws IOException {
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		if (!isClosed()) {</span>
+<span class="fc" id="L202">			mDelegate.close();</span>
+<span class="fc" id="L203">			destroyStreams();</span>
+		}
+<span class="fc" id="L205">	}</span>
+
+	/**
+	 * Destroys both, input and output, streams of this WebSocket adapter.
+	 */
+	@SuppressWarnings(&quot;WeakerAccess&quot;)
+	void destroyStreams() {
+<span class="fc bfc" id="L212" title="All 2 branches covered.">		if (mInputStream != null) {</span>
+<span class="fc" id="L213">			this.mInputStream.destroy();</span>
+<span class="fc" id="L214">			this.mInputStream = null;</span>
+		}
+<span class="fc bfc" id="L216" title="All 2 branches covered.">		if (mOutputStream != null) {</span>
+<span class="fc" id="L217">			this.mOutputStream.destroy();</span>
+<span class="fc" id="L218">			this.mOutputStream = null;</span>
+		}
+<span class="fc" id="L220">	}</span>
+
+	/**
+	 * Checks whether the adapted WebSocket is closed.
+	 *
+	 * @return {@code True} if the WebSocket is already closed, {@code false} otherwise.
+	 *
+	 * @see #isConnected()
+	 */
+	@Override
+	public final boolean isClosed() {
+<span class="fc" id="L231">		return mDelegate.isClosed();</span>
+	}
+
+	/*
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

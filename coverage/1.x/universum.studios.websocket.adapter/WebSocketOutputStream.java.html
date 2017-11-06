@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketOutputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">library</a> &gt; <a href="index.source.html" class="el_package">universum.studios.websocket.adapter</a> &gt; <span class="el_source">WebSocketOutputStream.java</span></div><h1>WebSocketOutputStream.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2017 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.websocket.adapter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nonnull;
+
+/**
+ * An {@link OutputStream} implementation used by {@link WebSocketAdapter} as its output stream.
+ *
+ * @author Martin Albedinsky
+ * @see WebSocketInputStream
+ */
+final class WebSocketOutputStream extends OutputStream {
+
+	/*
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	@SuppressWarnings(&quot;unused&quot;)
+	private static final String TAG = &quot;WebSocketOutputStream&quot;;
+
+	/**
+	 * Initial size for the buffer used by internal data stream.
+	 */
+	private static final int BUFFER_INITIAL_SIZE = 1024;
+
+	/*
+	 * Interface ===================================================================================
+	 */
+
+	/*
+	 * Static members ==============================================================================
+	 */
+
+	/*
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * Parent socket using this stream as its output.
+	 */
+	private final Closeable mSocket;
+
+	/**
+	 * Delegate to which is this stream sending all written data whenever they are requested to be
+	 * flushed via {@link #flush()}.
+	 */
+	private final WebSocketDelegate mDelegate;
+
+	/**
+	 * Boolean flag indicating whether this stream is closed or not.
+	 */
+<span class="fc" id="L78">	private final AtomicBoolean mClosed = new AtomicBoolean(false);</span>
+
+	/**
+	 * Internal stream used to store written data.
+	 */
+	private ByteArrayOutputStream mStream;
+
+	/*
+	 * Constructors ================================================================================
+	 */
+
+	/**
+	 * Creates a new instance of WebSocketOutputStream for the given &lt;var&gt;socket&lt;/var&gt; and &lt;var&gt;delegate&lt;/var&gt;.
+	 *
+	 * @param socket   The parent socket that will use this stream as its output.
+	 * @param delegate The delegate to which should this stream send data whenever a new data are
+	 *                 written to the stream and requested to be flushed via {@link #flush()}.
+	 */
+	WebSocketOutputStream(final Closeable socket, final WebSocketDelegate delegate) {
+<span class="fc" id="L97">		super();</span>
+<span class="fc" id="L98">		this.mSocket = socket;</span>
+<span class="fc" id="L99">		this.mDelegate = delegate;</span>
+<span class="fc" id="L100">		this.mStream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);</span>
+<span class="fc" id="L101">	}</span>
+
+	/*
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void write(@Nonnull final byte[] bytes, final int offset, final int length) throws IOException {
+<span class="fc" id="L111">		assertOpenedOrThrowException();</span>
+<span class="fc" id="L112">		this.mStream.write(bytes, offset, length);</span>
+<span class="fc" id="L113">	}</span>
+
+	/**
+	 */
+	@Override
+	public void write(final int b) throws IOException {
+<span class="fc" id="L119">		assertOpenedOrThrowException();</span>
+<span class="fc" id="L120">		this.mStream.write(b);</span>
+<span class="fc" id="L121">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized void flush() throws IOException {
+<span class="fc" id="L127">		assertOpenedOrThrowException();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		if (mStream.size() &gt; 0) {</span>
+<span class="fc" id="L129">			this.mDelegate.sendFrame(new WebSocketFrame.Builder().payload(mStream.toByteArray()).build());</span>
+<span class="fc" id="L130">			this.mStream.reset();</span>
+		}
+<span class="fc" id="L132">	}</span>
+
+	/**
+	 */
+	@Override
+	public synchronized void close() throws IOException {
+<span class="fc bfc" id="L138" title="All 2 branches covered.">		if (!mClosed.get()) {</span>
+<span class="fc" id="L139">			this.mStream.reset();</span>
+<span class="fc" id="L140">			this.mSocket.close();</span>
+<span class="fc" id="L141">			this.mClosed.set(true);</span>
+		}
+<span class="fc" id="L143">	}</span>
+
+	/**
+	 * Asserts that this stream is opened. If not an exception is thrown.
+	 *
+	 * @throws IOException If this stream has been already closed.
+	 */
+	private void assertOpenedOrThrowException() throws IOException {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		if (mClosed.get()) throw new IOException(TAG + &quot; has been already closed.&quot;);</span>
+<span class="fc" id="L152">	}</span>
+
+	/**
+	 * Destroys this stream. Destroying the stream also marks it as closed.
+	 */
+	void destroy() {
+<span class="fc" id="L158">		this.mStream = null;</span>
+<span class="fc" id="L159">		this.mClosed.set(true);</span>
+<span class="fc" id="L160">	}</span>
+
+	/*
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

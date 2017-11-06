@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseWebSocketDelegate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">library</a> &gt; <a href="index.source.html" class="el_package">universum.studios.websocket.adapter</a> &gt; <span class="el_source">BaseWebSocketDelegate.java</span></div><h1>BaseWebSocketDelegate.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2017 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License 
+ * you may obtain at
+ * 
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * You can redistribute, modify or publish any part of the code written within this file but as it 
+ * is described in the License, the software distributed under the License is distributed on an 
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * 
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.websocket.adapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+/**
+ * A {@link WebSocketDelegate} implementation which is recommended to be used as base for all
+ * concrete WebSocketDelegate implementations.
+ * &lt;p&gt;
+ * This base class implements mainly logic for registration and un-registration of
+ * {@link OnConnectionListener OnConnectionListenera} and {@link OnIncomingFrameListener OnIncomingFrameListeners}.
+ *
+ * @author Martin Albedinsky
+ */
+<span class="fc" id="L35">public abstract class BaseWebSocketDelegate implements WebSocketDelegate {</span>
+
+    /*
+	 * Constants ===================================================================================
+	 */
+
+	/**
+	 * Log TAG.
+	 */
+	// private static final String TAG = &quot;BaseWebSocketDelegate&quot;;
+
+    /*
+	 * Interface ===================================================================================
+	 */
+
+	/*
+	 * Static members ==============================================================================
+	 */
+
+	/*
+	 * Members =====================================================================================
+	 */
+
+	/**
+	 * List containing all {@link OnConnectionListener} that has been registered via
+	 * {@link #registerOnConnectionListener(OnConnectionListener)}.
+	 */
+<span class="fc" id="L62">	private final List&lt;OnConnectionListener&gt; mConnectionListeners = new ArrayList&lt;&gt;(1);</span>
+
+	/**
+	 * List containing all {@link OnIncomingFrameListener} that has been registered via
+	 * {@link #registerOnIncomingFrameListener(OnIncomingFrameListener)}.
+	 */
+<span class="fc" id="L68">	private final List&lt;OnIncomingFrameListener&gt; mIncomingFrameListeners = new ArrayList&lt;&gt;(1);</span>
+	 
+	/*
+	 * Constructors ================================================================================
+	 */
+	 
+	/*
+	 * Methods =====================================================================================
+	 */
+
+	/**
+	 */
+	@Override
+	public void registerOnConnectionListener(@Nonnull final OnConnectionListener listener) {
+<span class="fc" id="L82">		synchronized (mConnectionListeners) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">			if (!mConnectionListeners.contains(listener)) mConnectionListeners.add(listener);</span>
+<span class="pc" id="L84">		}</span>
+<span class="fc" id="L85">	}</span>
+
+	/**
+	 * Notifies all registered {@link OnConnectionListener OnConnectionListeners} that the adapted
+	 * WebSocket has been connected.
+	 */
+	protected void notifyConnected() {
+<span class="fc" id="L92">		synchronized (mConnectionListeners) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">			if (!mConnectionListeners.isEmpty()) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">				for (final OnConnectionListener listener : mConnectionListeners) {</span>
+<span class="fc" id="L95">					listener.onConnected();</span>
+<span class="fc" id="L96">				}</span>
+			}
+<span class="pc" id="L98">		}</span>
+<span class="fc" id="L99">	}</span>
+
+	/**
+	 * Notifies all registered {@link OnConnectionListener OnConnectionListeners} that the adapted
+	 * WebSocket has been disconnected.
+	 */
+	protected void notifyDisconnected() {
+<span class="fc" id="L106">		synchronized (mConnectionListeners) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">			if (!mConnectionListeners.isEmpty()) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">				for (final OnConnectionListener listener : mConnectionListeners) {</span>
+<span class="fc" id="L109">					listener.onDisconnected();</span>
+<span class="fc" id="L110">				}</span>
+			}
+<span class="pc" id="L112">		}</span>
+<span class="fc" id="L113">	}</span>
+
+	/**
+	 */
+	@Override
+	public void unregisterOnConnectionListener(@Nonnull final OnConnectionListener listener) {
+<span class="fc" id="L119">		synchronized (mConnectionListeners) {</span>
+<span class="fc" id="L120">			mConnectionListeners.remove(listener);</span>
+<span class="pc" id="L121">		}</span>
+<span class="fc" id="L122">	}</span>
+
+	/**
+	 */
+	@Override
+	public void registerOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
+<span class="fc" id="L128">		synchronized (mIncomingFrameListeners) {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">			if (!mIncomingFrameListeners.contains(listener)) mIncomingFrameListeners.add(listener);</span>
+<span class="pc" id="L130">		}</span>
+<span class="fc" id="L131">	}</span>
+
+	/**
+	 * Notifies all registered {@link OnIncomingFrameListener OnIncomingFrameListeners} about received
+	 * &lt;var&gt;frame&lt;/var&gt;.
+	 *
+	 * @param frame The frame that has been received by the adapted WebSocket.
+	 */
+	protected void notifyFrameReceived(@Nonnull final Frame frame) {
+<span class="fc" id="L140">		synchronized (mIncomingFrameListeners) {</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">			if (!mIncomingFrameListeners.isEmpty()) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">				for (final OnIncomingFrameListener watcher : mIncomingFrameListeners) {</span>
+<span class="fc" id="L143">					watcher.onFrameReceived(frame);</span>
+<span class="fc" id="L144">				}</span>
+			}
+<span class="pc" id="L146">		}</span>
+<span class="fc" id="L147">	}</span>
+
+	/**
+	 */
+	@Override
+	public void unregisterOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
+<span class="fc" id="L153">		synchronized (mIncomingFrameListeners) {</span>
+<span class="fc" id="L154">			mIncomingFrameListeners.remove(listener);</span>
+<span class="pc" id="L155">		}</span>
+<span class="fc" id="L156">	}</span>
+
+	/*
+	 * Inner classes ===============================================================================
+	 */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketDelegate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">library</a> &gt; <a href="index.source.html" class="el_package">universum.studios.websocket.adapter</a> &gt; <span class="el_source">WebSocketDelegate.java</span></div><h1>WebSocketDelegate.java</h1><pre class="source lang-java linenums">/*
+ * =================================================================================================
+ *                             Copyright (C) 2017 Universum Studios
+ * =================================================================================================
+ *         Licensed under the Apache License, Version 2.0 or later (further &quot;License&quot; only).
+ * -------------------------------------------------------------------------------------------------
+ * You may use this file only in compliance with the License. More details and copy of this License
+ * you may obtain at
+ *
+ * 		http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * You can redistribute, modify or publish any part of the code written within this file but as it
+ * is described in the License, the software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * =================================================================================================
+ */
+package universum.studios.websocket.adapter;
+
+import java.io.IOException;
+import java.net.SocketAddress;
+
+import javax.annotation.Nonnull;
+
+/**
+ * An interface that is used to hide a concrete implementation of WebSocket for purpose of adapting
+ * an asynchronous nature of WebSocket to synchronous nature of standard {@link java.net.Socket Socket}
+ * using {@link WebSocketAdapter}.
+ *
+ * @author Martin Albedinsky
+ */
+public interface WebSocketDelegate {
+
+	/**
+	 * Listener which may be used to listen for callbacks about connected and disconnected WebSocket.
+	 *
+	 * @author Martin Albedinsky
+	 */
+	interface OnConnectionListener {
+
+		/**
+		 * Invoked whenever the WebSocket becomes connected.
+		 */
+		void onConnected();
+
+		/**
+		 * Invoked whenever the WebSocket becomes disconnected.
+		 */
+		void onDisconnected();
+	}
+
+	/**
+	 * Basic interface for WebSocket frame.
+	 */
+	interface Frame {
+
+		/**
+		 * Implementation of {@link Frame} which provides empty payload.
+		 */
+<span class="fc" id="L61">		Frame EMPTY = new Frame() {</span>
+
+			/**
+			 */
+			@Nonnull
+			@Override
+			public byte[] getPayload() {
+<span class="fc" id="L68">				return new byte[0];</span>
+			}
+
+			/**
+			 */
+			@Override
+			public boolean isFinal() {
+<span class="fc" id="L75">				return true;</span>
+			}
+		};
+
+		/**
+		 * Returns the payload data of this frame.
+		 *
+		 * @return Frame's payload.
+		 */
+		@Nonnull
+		byte[] getPayload();
+
+		/**
+		 * Returns boolean flag indicating whether this frame is a final frame.
+		 *
+		 * @return {@code True} if this frame is a final one, {@code false} if there are more frames
+		 * to come to properly receive all the data.
+		 */
+		boolean isFinal();
+	}
+
+	/**
+	 * Listener which may be used to listen for callback about received WebSocket frame.
+	 *
+	 * @author Martin Albedinsky
+	 */
+	interface OnIncomingFrameListener {
+
+		/**
+		 * Invoked whenever a new frame is received by the WebSocket.
+		 *
+		 * @param frame The received frame.
+		 */
+		void onFrameReceived(@Nonnull Frame frame);
+	}
+
+	/**
+	 * Registers a listener to be invoked whenever the WebSocket connects or disconnects.
+	 *
+	 * @param listener The desired listener to be registered.
+	 * @see #unregisterOnConnectionListener(OnConnectionListener)
+	 */
+	void registerOnConnectionListener(@Nonnull OnConnectionListener listener);
+
+	/**
+	 * Un-registers the specified &lt;var&gt;listener&lt;/var&gt; from the registered ones, so it will no longer
+	 * receive any callbacks.
+	 *
+	 * @param listener The desired listener to be un-registered.
+	 * @see #registerOnConnectionListener(OnConnectionListener)
+	 */
+	void unregisterOnConnectionListener(@Nonnull OnConnectionListener listener);
+
+	/**
+	 * Registers a listener to be invoked whenever the WebSocket receives a new frame.
+	 *
+	 * @param listener The desired listener to be registered.
+	 * @see #unregisterOnIncomingFrameListener(OnIncomingFrameListener)
+	 */
+	void registerOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
+
+	/**
+	 * Un-registers the specified &lt;var&gt;listener&lt;/var&gt; from the registered ones, so it will no longer
+	 * receive any callbacks.
+	 *
+	 * @param listener The desired listener to be un-registered.
+	 * @see #registerOnIncomingFrameListener(OnIncomingFrameListener)
+	 */
+	void unregisterOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
+
+	/**
+	 * Performs connection of the wrapped WebSocket to the specified &lt;var&gt;remoteAddress&lt;/var&gt;.
+	 *
+	 * @param remoteAddress The remote address to which should the WebSocket connect.
+	 * @param timeout       The timeout for the connection.
+	 * @throws IOException If some IO error occurs during connection attempt.
+	 */
+	void connect(@Nonnull SocketAddress remoteAddress, int timeout) throws IOException;
+
+	/**
+	 * Returns boolean flag indicating whether the wrapped WebSocket is connected to the remote host.
+	 *
+	 * @return {@code True} if WebSocket is connected at this time, {@code false} otherwise.
+	 */
+	boolean isConnected();
+
+	/**
+	 * Sends the specified &lt;var&gt;frame&lt;/var&gt; via the wrapped WebSocket.
+	 *
+	 * @param frame The frame to be send.
+	 * @throws IOException If some IO error occurs during send operation or if the wrapped WebSocket
+	 *                     is already closed.
+	 */
+	void sendFrame(@Nonnull Frame frame) throws IOException;
+
+	/**
+	 * Closes the wrapped WebSocket.
+	 *
+	 * @throws IOException If some IO error occurs during close operation.
+	 * @see #isClosed()
+	 */
+	void close() throws IOException;
+
+	/**
+	 * Returns boolean flag indicating whether the wrapped WebSocket is closed. The WebSocket should
+	 * be closed always after {@link #close()} has been called.
+	 *
+	 * @return {@code True} if WebSocket is already closed, {@code false} otherwise.
+	 */
+	boolean isClosed();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
