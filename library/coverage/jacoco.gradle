@@ -32,4 +32,7 @@ jacocoTestReport {
 /**
  * Task that properly creates Jacoco test report for the current tests.
  */
-task createCoverageReport(dependsOn: ['test', 'jacocoTestReport'])
+task createCoverageReport(dependsOn: ['test', 'jacocoTestReport']) {
+    group 'reporting'
+    description 'Genrates Jacoco coverage reports after running debug tests.'
+}

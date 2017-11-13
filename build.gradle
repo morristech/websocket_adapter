@@ -7,8 +7,6 @@ apply from: './dependencies.gradle'
  * Global build script configuration ===============================================================
  */
 buildscript {
-    apply from: './repositories.gradle'
-
     repositories {
         jcenter()
     }
@@ -51,10 +49,9 @@ task clean(type: Delete) {
 task updateArtifacts() {
     subprojects.findAll { if (it.name.startsWith("library")) dependsOn ":${it.name}:updateArtifacts" }
     doLast {
-        final String artifactsDir = "${rootProject.rootDir}\\artifacts"
-        if (file(artifactsDir).exists()) {
+        if (file(repos.project.artifacts).exists()) {
             exec {
-                commandLine 'git', 'add', artifactsDir, '-A'
+                commandLine 'git', 'add', repos.project.artifacts, '-A'
             }
         }
     }
@@ -63,14 +60,23 @@ task updateArtifacts() {
 /**
  * Task that deploys (uploads) the library into Maven local repository.
  */
-task deployToMavenLocal(dependsOn: ':library:uploadArchives')
+task deployToMavenLocal(dependsOn: ':library:uploadArchives') {
+    group 'deploy'
+    description 'Deploys primary artifact of the library to the local Maven repository.'
+}
 
 /**
  * Task that deploys (uploads) the library up to the Bintray repository.
  */
-task deployToBintray(dependsOn: ':library:bintrayUpload')
+task deployToBintray(dependsOn: ':library:bintrayUpload') {
+    group 'deploy'
+    description 'Deploys primary artifact of the library up to the Bintray repository.'
+}
 
 /**
  * Task that deploys (uploads) the library up to the GitHub repository.
  */
-task deployToGitHub(dependsOn: ':library:githubUploadProductionRelease')
+task deployToGitHub(dependsOn: ':library:githubUploadProductionRelease') {
+    group 'deploy'
+    description 'Deploys primary artifact of the library up to the GitHub repository.'
+}

@@ -20,6 +20,7 @@
  * Bundles project's classes into a .jar! file.
  */
 task classesJar(type: Jar, dependsOn: classes) {
+    group 'artifact'
     description 'Bundles classes into a .jar! file'
     from "${buildDir}\\classes\\main"
 }
@@ -43,8 +44,9 @@ task generateJavadoc(type: Javadoc) {
  * Bundles project's Javadoc into a .jar! file.
  */
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    group 'artifact'
     description 'Bundles Javadoc into a .jar! file.'
+    classifier = 'javadoc'
     from generateJavadoc
 }
 
@@ -52,8 +54,9 @@ task javadocJar(type: Jar) {
  * Bundles project's Raw sources into a .jar! file.
  */
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    group 'artifact'
     description 'Bundles Raw sources into a .jar! file.'
+    classifier = 'sources'
     from sourceSets.main.allSource
 }
 

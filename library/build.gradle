@@ -28,14 +28,10 @@ targetCompatibility = JavaVersion.VERSION_1_8
  * Library dependencies ============================================================================
  */
 dependencies {
-    /*
-     * RELEASE DEPENDENCIES ------------------------------------------------------------------------
-     */
+    // PRODUCTION ----------------------------------------------------------------------------------
     compile deps.codeQuality.findbugs
 
-    /*
-     * TEST DEPENDENCIES ---------------------------------------------------------------------------
-     */
+    // TEST ----------------------------------------------------------------------------------------
     testCompile deps.test.junit
     testCompile deps.test.mockitoCore
 }
