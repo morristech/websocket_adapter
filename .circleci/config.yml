@@ -21,7 +21,7 @@ jobs:
           name: Grant Permissions
           command: ./ci/permissions.sh
       - restore_cache:
-          key: gradle-{{ checksum "library/build.gradle" }}
+          key: gradle-{{ checksum "dependencies.gradle" }}-{{ checksum "library/build.gradle" }}
       - run:
           name: Download Dependencies
           command: ./gradlew dependencies
@@ -29,7 +29,7 @@ jobs:
           name: Build Project
           command: ./ci/build.sh
       - save_cache:
-          key: gradle-{{ checksum "library/build.gradle" }}
+          key: gradle-{{ checksum "dependencies.gradle" }}-{{ checksum "library/build.gradle" }}
           paths:
             - "~/.gradle"
             - "~/.m2"
@@ -45,7 +45,7 @@ jobs:
           name: Grant Permissions
           command: ./ci/permissions.sh
       - restore_cache:
-          key: gradle-{{ checksum "library/build.gradle" }}
+          key: gradle-{{ checksum "dependencies.gradle" }}-{{ checksum "library/build.gradle" }}
       - run:
           name: Execute Tests
           command: ./ci/test.sh
@@ -64,7 +64,7 @@ jobs:
           name: Grant Permissions
           command: ./ci/permissions.sh
       - restore_cache:
-          key: gradle-{{ checksum "library/build.gradle" }}
+          key: gradle-{{ checksum "dependencies.gradle" }}-{{ checksum "library/build.gradle" }}
       - run:
           name: Deploy Artifacts
           command: ./ci/deploy.sh

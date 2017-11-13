@@ -53,7 +53,7 @@ def pomConfig = {
 
 publishing {
     publications {
-        LibraryPublication(MavenPublication) {
+        library(MavenPublication) {
             groupId config.maven.groupId
             artifactId config.maven.artifactId
             version config.maven.version
@@ -84,7 +84,7 @@ publishing {
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_API_KEY')
-    publications = ['LibraryPublication']
+    publications = ['library']
     override = true
     publish = config.bintray.publish
     pkg {
