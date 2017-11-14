@@ -21,8 +21,8 @@
  */
 task classesJar(type: Jar, dependsOn: classes) {
     group 'artifact'
-    description 'Bundles classes into a .jar! file'
-    from "${buildDir}\\classes\\main"
+    description "Bundles classes into 'artifact.jar' like file."
+    from "${buildDir}/classes/java/main"
 }
 
 /**
@@ -45,7 +45,7 @@ task generateJavadoc(type: Javadoc) {
  */
 task javadocJar(type: Jar) {
     group 'artifact'
-    description 'Bundles Javadoc into a .jar! file.'
+    description "Bundles Javadoc into 'artifact-javadoc.jar' like file."
     classifier = 'javadoc'
     from generateJavadoc
 }
@@ -55,7 +55,7 @@ task javadocJar(type: Jar) {
  */
 task sourcesJar(type: Jar, dependsOn: classes) {
     group 'artifact'
-    description 'Bundles Raw sources into a .jar! file.'
+    description "Bundles Raw sources into 'artifact-sources.jar' like file."
     classifier = 'sources'
     from sourceSets.main.allSource
 }

@@ -27,6 +27,7 @@ apply plugin: 'java'
  * Project dependencies ============================================================================
  */
 dependencies {
-    compile project(':library')
-    compile 'com.neovisionaries:nv-websocket-client:1.28'
+    implementation project(':library')
+    implementation deps.codeQuality.findbugs
+    implementation 'com.neovisionaries:nv-websocket-client:1.28'
 }

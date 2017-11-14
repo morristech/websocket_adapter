@@ -29,11 +29,11 @@ targetCompatibility = JavaVersion.VERSION_1_8
  */
 dependencies {
     // PRODUCTION ----------------------------------------------------------------------------------
-    compile deps.codeQuality.findbugs
+    implementation deps.codeQuality.findbugs
 
     // TEST ----------------------------------------------------------------------------------------
-    testCompile deps.test.junit
-    testCompile deps.test.mockitoCore
+    testImplementation deps.test.junit
+    testImplementation deps.test.mockitoCore
 }
 
 /**

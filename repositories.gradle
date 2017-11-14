@@ -6,7 +6,7 @@ def bintrayRepos = [
 ]
 
 def projectRepos = [
-        artifacts: './artifacts/'
+        artifacts: "${rootProject.rootDir}/artifacts"
 ]
 
 ext.repos = [
