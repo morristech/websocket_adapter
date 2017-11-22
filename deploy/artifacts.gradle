@@ -33,7 +33,7 @@ task generateJavadoc(type: Javadoc) {
 	options {
         title = "${config.maven.projectName} API"
         header = "Version ${config.maven.version} Documentation"
-        links "http://docs.oracle.com/javase/8/docs/api/"
+        links 'http://docs.oracle.com/javase/8/docs/api'
         author = true
         memberLevel = JavadocMemberLevel.PROTECTED
     }
