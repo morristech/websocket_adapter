@@ -48,7 +48,7 @@ task uploadCoverageToCodacy(type: JavaExec) {
             "-l",
             "Java",
             "-r",
-            "${buildDir}/reports/coverage/report.xml",
+            "${buildDir}/reports/jacoco/jacoco.xml",
             "--projectToken",
             token == null ? "NO_TOKEN" : token
     ]

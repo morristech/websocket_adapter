@@ -4,7 +4,7 @@
   <groupId>universum.studios</groupId>
   <artifactId>websocket-adapter</artifactId>
   <version>1.0.0</version>
-  <name>Java WebSocket Adapter</name>
+  <name>WebSocket Adapter</name>
   <url>https://github.com/universum-studios/websocket_adapter</url>
   <inceptionYear>2017</inceptionYear>
   <issueManagement>
