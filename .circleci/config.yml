@@ -79,8 +79,7 @@ workflows:
           context: org-global
           filters:
             branches:
-              ignore:
-                - gh-pages
+              ignore: gh-pages
       - test:
           context: org-global
           requires:

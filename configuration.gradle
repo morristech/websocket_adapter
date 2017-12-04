@@ -1,12 +1,17 @@
 // Defines configuration used across the library project.
 def libraryConfig = [
+        name   : 'websocket_adapter',
         version: '1.0.0'
 ]
 
 def githubConfig = [
         owner      : 'universum-studios',
-        repository : 'websocket_adapter',
+        repository : libraryConfig.name,
         accessToken: System.getenv('GITHUB_API_TOKEN')
+]
+
+def javadocConfig = [
+        reference: [online: "https://universum-studios.github.io/${libraryConfig.name}/reference/1.x"]
 ]
 
 def mavenConfig = [
@@ -38,6 +43,7 @@ def codacyConfig = [
 
 ext.config = [
         "library": libraryConfig,
+        "javadoc": javadocConfig,
         "github" : githubConfig,
         "maven"  : mavenConfig,
         "bintray": bintrayConfig,
