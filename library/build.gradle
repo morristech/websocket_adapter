@@ -31,6 +31,9 @@ dependencies {
     // PRODUCTION ----------------------------------------------------------------------------------
     implementation deps.codeQuality.findbugs
 
+    // DEVELOPMENT ---------------------------------------------------------------------------------
+    // None.
+
     // TEST ----------------------------------------------------------------------------------------
     testImplementation deps.test.junit
     testImplementation deps.test.mockitoCore
@@ -39,7 +42,6 @@ dependencies {
 /**
  * Additional configuration ========================================================================
  */
-// todo: apply from: 'analysis/analysis.gradle'
 apply from: 'coverage/jacoco.gradle'
 apply from: 'coverage/codacy.gradle'
 apply from: "${rootProject.rootDir}/deploy/deploy.gradle"

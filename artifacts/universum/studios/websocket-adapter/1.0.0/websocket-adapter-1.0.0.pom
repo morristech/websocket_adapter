@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>universum.studios</groupId>
   <artifactId>websocket-adapter</artifactId>
   <version>1.0.0</version>
   <name>WebSocket Adapter</name>
+  <description>Socket implementation that wraps asynchronous nature of WebSocket.</description>
   <url>https://github.com/universum-studios/websocket_adapter</url>
   <inceptionYear>2017</inceptionYear>
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/universum-studios/websocket_adapter/issues</url>
-  </issueManagement>
+  <organization>
+    <name>Universum Studios</name>
+    <url>https://universum-studios.github.io</url>
+  </organization>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -18,25 +20,38 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <organization>
-    <name>Universum Studios</name>
-    <url>https://universum-studios.github.io</url>
-  </organization>
   <developers>
     <developer>
       <id>albedinsky</id>
       <name>Martin Albedinsky</name>
       <email>martin.albedinsky@gmail.com</email>
       <roles>
-        <role>Android Software Engineer</role>
+        <role>Software Engineer</role>
       </roles>
     </developer>
   </developers>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/universum-studios/websocket_adapter/issues</url>
+  </issueManagement>
   <dependencies>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>
       <version>3.0.2</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.11.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

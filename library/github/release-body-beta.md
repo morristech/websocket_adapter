@@ -4,4 +4,4 @@ Beta release patch.
 
 ### Changes ###
 
-- None.
+- Small updates and improvements.
