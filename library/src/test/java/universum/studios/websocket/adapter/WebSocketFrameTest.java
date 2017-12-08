@@ -29,9 +29,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 public final class WebSocketFrameTest {
     
-	@SuppressWarnings("unused")
-	private static final String TAG = "WebSocketFrameTest";
-
     @Test
 	public void testBuilderBuild() {
 	    final byte[] payload = new byte[]{0, 1, 1, 1, 0};
