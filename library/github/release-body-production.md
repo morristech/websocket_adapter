@@ -1,7 +1,7 @@
 ### Overview ###
 
-Major release.
+Release patch.
 
 ### Changes ###
 
-- First production release.
+- Small updates and improvements.
