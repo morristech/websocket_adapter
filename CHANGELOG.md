@@ -1,6 +1,8 @@
 Change-Log
 ===============
 
+More **detailed changelog** for each respective version may be viewed by pressing on a desired _version's name_.
+
 ## Version 1.x ##
 
 ### [1.0.0](https://github.com/universum-studios/websocket_adapter/releases/tag/v1.0.0) ###

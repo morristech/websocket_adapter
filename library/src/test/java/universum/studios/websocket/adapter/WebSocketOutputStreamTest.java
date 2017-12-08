@@ -35,9 +35,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
  */
 public class WebSocketOutputStreamTest {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = "WebSocketInputStreamTest";
-
 	@Test
 	public void testWriteBytes() throws Exception {
 		final Closeable mockSocket = mock(Closeable.class);

@@ -36,9 +36,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
  */
 public final class BaseWebSocketDelegateTest {
     
-	@SuppressWarnings("unused")
-	private static final String TAG = "BaseWebSocketDelegateTest";
-
     @Test
 	public void testRegisterOnConnectionListener() {
 	    final BaseWebSocketDelegate delegate = new TestDelegate();

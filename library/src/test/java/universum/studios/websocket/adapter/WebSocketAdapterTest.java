@@ -41,9 +41,6 @@ import static org.mockito.Mockito.when;
  */
 public class WebSocketAdapterTest {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = "WebSocketAdapterTest";
-
 	@Test
 	public void testOnConnectionListenerOnConnected() throws IOException {
 		final TestDelegate delegate = new TestDelegate();
