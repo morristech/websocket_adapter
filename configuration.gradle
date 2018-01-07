@@ -1,7 +1,10 @@
 // Defines configuration used across the library project.
 def libraryConfig = [
         name   : 'websocket_adapter',
-        version: '1.0.0'
+        version: [
+                production : '1.0.0',
+                development: '1.0.0'
+        ]
 ]
 
 def githubConfig = [
@@ -10,41 +13,76 @@ def githubConfig = [
         accessToken: System.getenv('GITHUB_API_TOKEN')
 ]
 
+def pomConfig = [
+        groupId   : 'universum.studios',
+        artifactId: 'websocket-adapter',
+        version   : libraryConfig.version.development,
+        packaging : 'pom',
+        project   : [
+                name           : 'WebSocket Adapter',
+                description    : 'Socket implementation that wraps asynchronous nature of WebSocket.',
+                url            : "https://github.com/${githubConfig.owner}/${githubConfig.repository}",
+                inceptionYear  : '2017',
+                issueManagement: [
+                        system: 'Issue Tracker',
+                        url   : "https://github.com/${githubConfig.owner}/${githubConfig.repository}/issues"
+                ],
+                licenses       : [
+                        Apache20: [
+                                name        : 'The Apache Software License, Version 2.0',
+                                url         : 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+                                distribution: 'repo'
+                        ]
+                ],
+                organization   : [
+                        name: 'Universum Studios',
+                        url : 'https://universum-studios.github.io'
+                ],
+                developers     : [
+                        albedinsky: [
+                                id   : 'albedinsky',
+                                name : 'Martin Albedinsky',
+                                email: 'martin.albedinsky@gmail.com',
+                                role : 'Software Engineer'
+                        ]
+                ]
+        ]
+]
+
 def javadocConfig = [
+        title    : "${pomConfig.project.name} API",
+        header   : "Version ${pomConfig.version} Documentation",
         reference: [online: "https://universum-studios.github.io/${libraryConfig.name}/reference/1.x"]
 ]
 
 def mavenConfig = [
-        localUrl                 : System.getenv('MAVEN_URL_LOCAL'),
-        groupId                  : 'universum.studios',
-        artifactId               : 'websocket-adapter',
-        version                  : libraryConfig.version,
-        packaging                : 'pom',
-        projectName              : 'WebSocket Adapter',
-        projectDescription       : 'Socket implementation that wraps asynchronous nature of WebSocket.',
-        projectUrl               : "https://github.com/${githubConfig.owner}/${githubConfig.repository}",
-        projectInceptionYear     : '2017',
-        projectIssueManagementUrl: "https://github.com/${githubConfig.owner}/${githubConfig.repository}/issues"
+        localUrl: System.getenv('MAVEN_URL_LOCAL')
 ]
 
 def bintrayConfig = [
-        publish                  : false,
-        packageName              : "${mavenConfig.groupId}:${mavenConfig.artifactId}",
-        packageLabels            : ['java', 'websocket', 'adapter'],
-        packageVersionName       : mavenConfig.version,
-        packageVersionDescription: 'First production release.',
-        packageVersionTag        : "v${mavenConfig.version}"
+        publish: false,
+        package: [
+                organization      : 'universum-studios',
+                repository        : 'java',
+                name              : "${pomConfig.groupId}:${pomConfig.artifactId}",
+                vcsUrl            : "${pomConfig.project.url}.git",
+                labels            : ['java', 'websocket', 'adapter'],
+                versionName       : pomConfig.version,
+                versionDescription: 'Release patch.',
+                versionTag        : "v${pomConfig.version}"
+        ]
 ]
 
 def codacyConfig = [
         tokensPath : System.getenv('CODACY_PROJECT_TOKENS'),
-        projectName: "${githubConfig.repository}"
+        projectName: githubConfig.repository
 ]
 
 ext.config = [
         "library": libraryConfig,
-        "javadoc": javadocConfig,
         "github" : githubConfig,
+        "pom"    : pomConfig,
+        "javadoc": javadocConfig,
         "maven"  : mavenConfig,
         "bintray": bintrayConfig,
         "codacy" : codacyConfig

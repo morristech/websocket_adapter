@@ -30,9 +30,9 @@ task classesJar(type: Jar, dependsOn: classes) {
  */
 task generateJavadoc(type: Javadoc) {
     source sourceSets.main.allSource
-	options {
-        title = "${config.maven.projectName} API"
-        header = "Version ${config.maven.version} Documentation"
+    options {
+        title = config.javadoc.title
+        header = config.javadoc.header
         author = true
         memberLevel = JavadocMemberLevel.PROTECTED
         links 'http://docs.oracle.com/javase/8/docs/api'
