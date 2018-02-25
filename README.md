@@ -16,7 +16,7 @@ Download the latest **[release](https://github.com/universum-studios/websocket_a
 
 ### Gradle ###
 
-    implementation "universum.studios:websocket-adapter:${DESIRED_VERSION}@aar"
+    implementation "universum.studios:websocket-adapter:${DESIRED_VERSION}"
 
 ## License ##
 
