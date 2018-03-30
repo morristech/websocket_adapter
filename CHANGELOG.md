@@ -1,5 +1,6 @@
 Change-Log
 ===============
+> Regular configuration update: _30.03.2018_
 
 More **detailed changelog** for each respective version may be viewed by pressing on a desired _version's name_.
 

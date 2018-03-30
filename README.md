@@ -1,7 +1,7 @@
 WebSocket Adapter
 ===============
 
-[![CircleCI](https://circleci.com/gh/universum-studios/websocket_adapter.svg?style=svg)](https://circleci.com/gh/universum-studios/websocket_adapter)
+[![CircleCI](https://circleci.com/gh/universum-studios/websocket_adapter.svg?style=shield)](https://circleci.com/gh/universum-studios/websocket_adapter)
 [![Codecov](https://codecov.io/gh/universum-studios/websocket_adapter/branch/master/graph/badge.svg)](https://codecov.io/gh/universum-studios/websocket_adapter)
 [![Codacy](https://api.codacy.com/project/badge/Grade/16c8243fd02a4b72b7c949ebee0297e2)](https://www.codacy.com/app/universum-studios/websocket_adapter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=universum-studios/websocket_adapter&amp;utm_campaign=Badge_Grade)
 
@@ -12,7 +12,7 @@ For more information please visit the **[Wiki](https://github.com/universum-stud
 ## Download ##
 [![Bintray](https://api.bintray.com/packages/universum-studios/java/universum.studios%3Awebsocket-adapter/images/download.svg) ](https://bintray.com/universum-studios/java/universum.studios%3Awebsocket-adapter/_latestVersion)
 
-Download the latest **[release](https://github.com/universum-studios/websocket_adapter/releases "Latest Releases page")** or **add as dependency** in your project via:
+Download the latest **[release](https://github.com/universum-studios/websocket_adapter/releases "Releases page")** or **add as dependency** in your project via:
 
 ### Gradle ###
 
