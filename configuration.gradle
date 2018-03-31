@@ -75,7 +75,7 @@ def bintrayConfig = [
 
 def codacyConfig = [
         tokensPath : System.getenv('CODACY_PROJECT_TOKENS'),
-        projectName: githubConfig.repository
+        projectName: "java_${githubConfig.repository}"
 ]
 
 ext.config = [
