@@ -1,21 +1,21 @@
 /*
-* =================================================================================================
-*                             Copyright (C) 2017 Universum Studios
-* =================================================================================================
-*         Licensed under the Apache License, Version 2.0 or later (further "License" only).
-* -------------------------------------------------------------------------------------------------
-* You may use this file only in compliance with the License. More details and copy of this License 
-* you may obtain at
-* 
-* 		http://www.apache.org/licenses/LICENSE-2.0
-* 
-* You can redistribute, modify or publish any part of the code written within this file but as it 
-* is described in the License, the software distributed under the License is distributed on an 
-* "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
-* 
-* See the License for the specific language governing permissions and limitations under the License.
-* =================================================================================================
-*/
+ * *************************************************************************************************
+ *                                 Copyright 2017 Universum Studios
+ * *************************************************************************************************
+ *                  Licensed under the Apache License, Version 2.0 (the "License")
+ * -------------------------------------------------------------------------------------------------
+ * You may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
+ *
+ * See the License for the specific language governing permissions and limitations under the License.
+ * *************************************************************************************************
+ */
 package universum.studios.samples.websocket.adapter;
 
 import com.neovisionaries.ws.client.OpeningHandshakeException;
@@ -42,9 +42,6 @@ import universum.studios.websocket.adapter.BaseWebSocketDelegate;
  */
 public final class SampleWebSocket extends universum.studios.websocket.adapter.WebSocketAdapter {
 
-	@SuppressWarnings("unused")
-	private static final String TAG = "SampleWebSocket";
-
 	public SampleWebSocket() {
 		super(new SocketDelegate());
 	}
@@ -55,13 +52,11 @@ public final class SampleWebSocket extends universum.studios.websocket.adapter.W
 
 		private final WebSocketListener LISTENER = new WebSocketAdapter() {
 
-			@Override
-			public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+			@Override public void onConnected(@Nonnull final WebSocket websocket, @Nonnull final Map<String, List<String>> headers) throws Exception {
 				notifyConnected();
 			}
 
-			@Override
-			public void onFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+			@Override public void onFrame(@Nonnull final WebSocket websocket, @Nonnull final WebSocketFrame frame) throws Exception {
 				notifyFrameReceived(new universum.studios.websocket.adapter.WebSocketFrame.Builder()
 						.payload(frame.getPayload())
 						.isFinal(frame.getFin())
@@ -69,13 +64,15 @@ public final class SampleWebSocket extends universum.studios.websocket.adapter.W
 				);
 			}
 
-			@Override
-			public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+			@Override public void onError(@Nonnull final WebSocket websocket, @Nonnull final WebSocketException cause) throws Exception {
 				close();
 			}
 
-			@Override
-			public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+			@Override public void onDisconnected(
+					@Nonnull final WebSocket websocket,
+					@Nonnull final WebSocketFrame serverCloseFrame,
+					@Nonnull final WebSocketFrame clientCloseFrame,
+					final boolean closedByServer) throws Exception {
 				webSocket = null;
 				notifyDisconnected();
 			}
@@ -88,8 +85,7 @@ public final class SampleWebSocket extends universum.studios.websocket.adapter.W
 			this.factory = new WebSocketFactory();
 		}
 
-		@Override
-		public void connect(@Nonnull SocketAddress remoteAddress, int timeout) throws IOException {
+		@Override public void connect(@Nonnull final SocketAddress remoteAddress, final int timeout) throws IOException {
 			final InetSocketAddress address = assertSupportedAddressOrThrow(remoteAddress);
 			this.webSocket = connectTo(String.format(
 					URL_FORMAT,
@@ -99,14 +95,14 @@ public final class SampleWebSocket extends universum.studios.websocket.adapter.W
 			);
 		}
 
-		private static InetSocketAddress assertSupportedAddressOrThrow(SocketAddress address) {
+		private static InetSocketAddress assertSupportedAddressOrThrow(final SocketAddress address) {
 			if (!(address instanceof InetSocketAddress)) {
 				throw new IllegalArgumentException("Not supported socket address!");
 			}
 			return (InetSocketAddress) address;
 		}
 
-		private WebSocket connectTo(String url, long timeout) {
+		private WebSocket connectTo(final String url, long timeout) {
 			try {
 				final WebSocket webSocket = factory.createSocket(url, (int) timeout);
 				webSocket.addListener(LISTENER);
@@ -123,23 +119,19 @@ public final class SampleWebSocket extends universum.studios.websocket.adapter.W
 		}
 
 
-		@Override
-		public boolean isConnected() {
+		@Override public boolean isConnected() {
 			return webSocket != null && webSocket.isOpen();
 		}
 
-		@Override
-		public void sendFrame(@Nonnull Frame frame) throws IOException {
+		@Override public void sendFrame(@Nonnull final Frame frame) throws IOException {
 			if (webSocket != null) webSocket.sendBinary(frame.getPayload());
 		}
 
-		@Override
-		public void close() throws IOException {
+		@Override public void close() throws IOException {
 			if (webSocket.isOpen()) webSocket.disconnect(WebSocketCloseCode.NORMAL, null, 0);
 		}
 
-		@Override
-		public boolean isClosed() {
+		@Override public boolean isClosed() {
 			return webSocket == null || !webSocket.isOpen();
 		}
 	}
