@@ -1,20 +1,20 @@
 /*
- * =================================================================================================
- *                             Copyright (C) 2017 Universum Studios
- * =================================================================================================
- *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * *************************************************************************************************
+ *                                 Copyright 2017 Universum Studios
+ * *************************************************************************************************
+ *                  Licensed under the Apache License, Version 2.0 (the "License")
  * -------------------------------------------------------------------------------------------------
- * You may use this file only in compliance with the License. More details and copy of this License
- * you may obtain at
+ * You may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You can redistribute, modify or publish any part of the code written within this file but as it
- * is described in the License, the software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
  * See the License for the specific language governing permissions and limitations under the License.
- * =================================================================================================
+ * *************************************************************************************************
  */
 package universum.studios.websocket.adapter;
 
@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
  * using {@link WebSocketAdapter}.
  *
  * @author Martin Albedinsky
+ * @since 1.0
  */
 public interface WebSocketDelegate {
 
@@ -36,6 +37,7 @@ public interface WebSocketDelegate {
 	 * Listener which may be used to listen for callbacks about connected and disconnected WebSocket.
 	 *
 	 * @author Martin Albedinsky
+	 * @since 1.0
 	 */
 	interface OnConnectionListener {
 
@@ -62,16 +64,13 @@ public interface WebSocketDelegate {
 
 			/**
 			 */
-			@Nonnull
-			@Override
-			public byte[] getPayload() {
+			@Override @Nonnull public byte[] getPayload() {
 				return new byte[0];
 			}
 
 			/**
 			 */
-			@Override
-			public boolean isFinal() {
+			@Override public boolean isFinal() {
 				return true;
 			}
 		};
@@ -81,8 +80,7 @@ public interface WebSocketDelegate {
 		 *
 		 * @return Frame's payload.
 		 */
-		@Nonnull
-		byte[] getPayload();
+		@Nonnull byte[] getPayload();
 
 		/**
 		 * Returns boolean flag indicating whether this frame is a final frame.
@@ -97,6 +95,7 @@ public interface WebSocketDelegate {
 	 * Listener which may be used to listen for callback about received WebSocket frame.
 	 *
 	 * @author Martin Albedinsky
+	 * @since 1.0
 	 */
 	interface OnIncomingFrameListener {
 
@@ -112,6 +111,7 @@ public interface WebSocketDelegate {
 	 * Registers a listener to be invoked whenever the WebSocket connects or disconnects.
 	 *
 	 * @param listener The desired listener to be registered.
+	 *
 	 * @see #unregisterOnConnectionListener(OnConnectionListener)
 	 */
 	void registerOnConnectionListener(@Nonnull OnConnectionListener listener);
@@ -121,6 +121,7 @@ public interface WebSocketDelegate {
 	 * receive any callbacks.
 	 *
 	 * @param listener The desired listener to be un-registered.
+	 *
 	 * @see #registerOnConnectionListener(OnConnectionListener)
 	 */
 	void unregisterOnConnectionListener(@Nonnull OnConnectionListener listener);
@@ -129,6 +130,7 @@ public interface WebSocketDelegate {
 	 * Registers a listener to be invoked whenever the WebSocket receives a new frame.
 	 *
 	 * @param listener The desired listener to be registered.
+	 *
 	 * @see #unregisterOnIncomingFrameListener(OnIncomingFrameListener)
 	 */
 	void registerOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
@@ -138,6 +140,7 @@ public interface WebSocketDelegate {
 	 * receive any callbacks.
 	 *
 	 * @param listener The desired listener to be un-registered.
+	 *
 	 * @see #registerOnIncomingFrameListener(OnIncomingFrameListener)
 	 */
 	void unregisterOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
@@ -171,6 +174,7 @@ public interface WebSocketDelegate {
 	 * Closes the wrapped WebSocket.
 	 *
 	 * @throws IOException If some IO error occurs during close operation.
+	 *
 	 * @see #isClosed()
 	 */
 	void close() throws IOException;

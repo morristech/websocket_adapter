@@ -1,20 +1,20 @@
 /*
- * =================================================================================================
- *                             Copyright (C) 2017 Universum Studios
- * =================================================================================================
- *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * *************************************************************************************************
+ *                                 Copyright 2017 Universum Studios
+ * *************************************************************************************************
+ *                  Licensed under the Apache License, Version 2.0 (the "License")
  * -------------------------------------------------------------------------------------------------
- * You may use this file only in compliance with the License. More details and copy of this License
- * you may obtain at
+ * You may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You can redistribute, modify or publish any part of the code written within this file but as it
- * is described in the License, the software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
  * See the License for the specific language governing permissions and limitations under the License.
- * =================================================================================================
+ * *************************************************************************************************
  */
 package universum.studios.websocket.adapter;
 
@@ -33,6 +33,8 @@ import javax.annotation.Nonnull;
  * An {@link InputStream} implementation used by {@link WebSocketAdapter} as its input stream.
  *
  * @author Martin Albedinsky
+ * @since 1.0
+ *
  * @see WebSocketOutputStream
  */
 final class WebSocketInputStream extends InputStream implements WebSocketDelegate.OnIncomingFrameListener {
@@ -67,18 +69,18 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	/**
 	 * Boolean flag indicating whether this stream is closed or not.
 	 */
-	private final AtomicBoolean mClosed = new AtomicBoolean(false);
+	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	/**
 	 * Parent socket using this stream as its input.
 	 */
-	private final Closeable mSocket;
+	private final Closeable socket;
 
 	/**
 	 * Delegate from which is this stream receiving all frame's payload data and making them available
 	 * via its read methods.
 	 */
-	private final WebSocketDelegate mDelegate;
+	private final WebSocketDelegate delegate;
 
 	/**
 	 * Buffer storing all data from the received frames via {@link #onFrameReceived(WebSocketDelegate.Frame)}
@@ -86,30 +88,30 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 *
 	 * @see WebSocketDelegate.Frame#isFinal()
 	 */
-	private byte[] mDataBuffer = new byte[0];
+	private byte[] dataBuffer = new byte[0];
 
 	/**
 	 * Queue used to store payload data of the received frames which are processed/read one at a time.
 	 *
 	 * @see WebSocketDelegate.Frame#getPayload()
 	 */
-	private final Queue<byte[]> mDataQueue;
+	private final Queue<byte[]> dataQueue;
 
 	/**
-	 * Lock used for synchronized operations upon {@link #mDataQueue}.
+	 * Lock used for synchronized operations upon {@link #dataQueue}.
 	 */
-	private final Object mDataLock = new Object();
+	private final Object dataLock = new Object();
 
 	/**
 	 * Internal stream used for reading of received data.
 	 */
-	private ByteArrayInputStream mStream;
+	private ByteArrayInputStream stream;
 
 	/**
 	 * Count down latch that is used to lock reading of this stream's data until there are some
 	 * new data to be read.
 	 */
-	private CountDownLatch mCountDownLatch;
+	private CountDownLatch countDownLatch;
 
 	/*
 	 * Constructors ================================================================================
@@ -124,10 +126,10 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 */
 	WebSocketInputStream(final Closeable socket, final WebSocketDelegate delegate) {
 		super();
-		this.mSocket = socket;
-		this.mDelegate = delegate;
-		this.mDelegate.registerOnIncomingFrameListener(this);
-		this.mDataQueue = new LinkedBlockingQueue<>(DATA_QUEUE_INITIAL_SIZE);
+		this.socket = socket;
+		this.delegate = delegate;
+		this.delegate.registerOnIncomingFrameListener(this);
+		this.dataQueue = new LinkedBlockingQueue<>(DATA_QUEUE_INITIAL_SIZE);
 	}
 
 	/*
@@ -136,21 +138,20 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 
 	/**
 	 */
-	@Override
-	public void onFrameReceived(@Nonnull final WebSocketDelegate.Frame frame) {
-		if (mClosed.get()) {
+	@Override public void onFrameReceived(@Nonnull final WebSocketDelegate.Frame frame) {
+		if (closed.get()) {
 			return;
 		}
-		synchronized (mDataLock) {
+		synchronized (dataLock) {
 			final byte[] payload = frame.getPayload();
 			// Expand the existing buffer and write the payload data into it.
-			final byte[] newBuffer = new byte[mDataBuffer.length + payload.length];
-			System.arraycopy(mDataBuffer, 0, newBuffer, 0, mDataBuffer.length);
-			System.arraycopy(payload, 0, newBuffer, mDataBuffer.length, payload.length);
-			this.mDataBuffer = newBuffer;
-			if (frame.isFinal() && mDataBuffer.length > 0) {
-				addData(mDataBuffer);
-				this.mDataBuffer = new byte[0];
+			final byte[] newBuffer = new byte[dataBuffer.length + payload.length];
+			System.arraycopy(dataBuffer, 0, newBuffer, 0, dataBuffer.length);
+			System.arraycopy(payload, 0, newBuffer, dataBuffer.length, payload.length);
+			this.dataBuffer = newBuffer;
+			if (frame.isFinal() && dataBuffer.length > 0) {
+				addData(dataBuffer);
+				this.dataBuffer = new byte[0];
 			}
 		}
 	}
@@ -164,100 +165,92 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 * @param bytes The bytes to be received and made available for reading via this stream.
 	 */
 	private void addData(byte[] bytes) {
-		if (mStream == null) {
-			this.mStream = new ByteArrayInputStream(bytes);
-			if (mCountDownLatch != null && mCountDownLatch.getCount() > 0) {
-				this.mCountDownLatch.countDown();
+		if (stream == null) {
+			this.stream = new ByteArrayInputStream(bytes);
+			if (countDownLatch != null && countDownLatch.getCount() > 0) {
+				this.countDownLatch.countDown();
 			}
-			this.mCountDownLatch = null;
+			this.countDownLatch = null;
 		} else {
-			mDataQueue.add(bytes);
+			dataQueue.add(bytes);
 		}
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized int available() throws IOException {
+	@Override public synchronized int available() throws IOException {
 		assertOpenedOrThrowException();
-		return mStream == null ? 0 : mStream.available();
+		return stream == null ? 0 : stream.available();
 	}
 
 
 	/**
 	 */
-	@Override
-	public synchronized long skip(final long n) throws IOException {
+	@Override public synchronized long skip(final long n) throws IOException {
 		assertOpenedOrThrowException();
-		return mStream == null ? 0 : mStream.skip(n);
+		return stream == null ? 0 : stream.skip(n);
 	}
 
 	/**
 	 */
-	@Override
-	public boolean markSupported() {
+	@Override public boolean markSupported() {
 		return true;
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized void mark(final int i) {
-		if (mStream != null) mStream.mark(i);
+	@Override public synchronized void mark(final int i) {
+		if (stream != null) stream.mark(i);
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized void reset() throws IOException {
-		if (mStream != null) mStream.reset();
+	@Override public synchronized void reset() throws IOException {
+		if (stream != null) stream.reset();
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized int read() throws IOException {
+	@Override public synchronized int read() throws IOException {
 		assertOpenedOrThrowException();
-		if (mStream != null) {
-			final int b = mStream.read();
+		if (stream != null) {
+			final int b = stream.read();
 			if (b == -1) {
-				this.mStream = null;
+				this.stream = null;
 			}
 			return b;
 		}
 		// No more data in the stream, check if we have some queued data.
-		synchronized (mDataLock) {
-			if (mDataQueue.size() > 0) {
-				this.mStream = new ByteArrayInputStream(mDataQueue.poll());
+		synchronized (dataLock) {
+			if (dataQueue.size() > 0) {
+				this.stream = new ByteArrayInputStream(dataQueue.poll());
 			} else {
-				this.mStream = null;
-				this.mCountDownLatch = new CountDownLatch(1);
+				this.stream = null;
+				this.countDownLatch = new CountDownLatch(1);
 			}
 		}
-		if (mStream == null) {
+		if (stream == null) {
 			// We do not have any data to read from, wait for the new one.
 			try {
-				this.mCountDownLatch.await();
+				this.countDownLatch.await();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		final int b = mStream == null ? -1 : mStream.read();
+		final int b = stream == null ? -1 : stream.read();
 		if (b == -1) {
 			throw new IOException("Unexpected end of the stream.");
 		}
 		return b;
 	}
 
-
 	/**
 	 */
-	@Override
-	public synchronized void close() throws IOException {
-		if (!mClosed.get()) {
-			this.mSocket.close();
-			this.mStream = null;
-			this.mClosed.set(true);
+	@Override public synchronized void close() throws IOException {
+		if (!closed.get()) {
+			this.socket.close();
+			this.stream = null;
+			this.closed.set(true);
 		}
 	}
 
@@ -267,20 +260,20 @@ final class WebSocketInputStream extends InputStream implements WebSocketDelegat
 	 * @throws IOException If this stream has been already closed.
 	 */
 	private void assertOpenedOrThrowException() throws IOException {
-		if (mClosed.get()) throw new IOException(TAG + " has been already closed.");
+		if (closed.get()) throw new IOException(TAG + " has been already closed.");
 	}
 
 	/**
 	 * Destroys this stream. Destroying the stream also marks it as closed.
 	 */
 	void destroy() {
-		this.mStream = null;
-		if (mCountDownLatch != null) {
-			this.mCountDownLatch.countDown();
-			this.mCountDownLatch = null;
+		this.stream = null;
+		if (countDownLatch != null) {
+			this.countDownLatch.countDown();
+			this.countDownLatch = null;
 		}
-		this.mDelegate.unregisterOnIncomingFrameListener(this);
-		this.mClosed.set(true);
+		this.delegate.unregisterOnIncomingFrameListener(this);
+		this.closed.set(true);
 	}
 
 	/*

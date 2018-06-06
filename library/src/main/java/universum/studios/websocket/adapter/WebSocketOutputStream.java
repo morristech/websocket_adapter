@@ -1,20 +1,20 @@
 /*
- * =================================================================================================
- *                             Copyright (C) 2017 Universum Studios
- * =================================================================================================
- *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * *************************************************************************************************
+ *                                 Copyright 2017 Universum Studios
+ * *************************************************************************************************
+ *                  Licensed under the Apache License, Version 2.0 (the "License")
  * -------------------------------------------------------------------------------------------------
- * You may use this file only in compliance with the License. More details and copy of this License
- * you may obtain at
+ * You may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You can redistribute, modify or publish any part of the code written within this file but as it
- * is described in the License, the software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
  * See the License for the specific language governing permissions and limitations under the License.
- * =================================================================================================
+ * *************************************************************************************************
  */
 package universum.studios.websocket.adapter;
 
@@ -30,6 +30,8 @@ import javax.annotation.Nonnull;
  * An {@link OutputStream} implementation used by {@link WebSocketAdapter} as its output stream.
  *
  * @author Martin Albedinsky
+ * @since 1.0
+ *
  * @see WebSocketInputStream
  */
 final class WebSocketOutputStream extends OutputStream {
@@ -64,23 +66,23 @@ final class WebSocketOutputStream extends OutputStream {
 	/**
 	 * Parent socket using this stream as its output.
 	 */
-	private final Closeable mSocket;
+	private final Closeable socket;
 
 	/**
 	 * Delegate to which is this stream sending all written data whenever they are requested to be
 	 * flushed via {@link #flush()}.
 	 */
-	private final WebSocketDelegate mDelegate;
+	private final WebSocketDelegate delegate;
 
 	/**
 	 * Boolean flag indicating whether this stream is closed or not.
 	 */
-	private final AtomicBoolean mClosed = new AtomicBoolean(false);
+	private final AtomicBoolean closed = new AtomicBoolean(false);
 
 	/**
 	 * Internal stream used to store written data.
 	 */
-	private ByteArrayOutputStream mStream;
+	private ByteArrayOutputStream stream;
 
 	/*
 	 * Constructors ================================================================================
@@ -95,9 +97,9 @@ final class WebSocketOutputStream extends OutputStream {
 	 */
 	WebSocketOutputStream(final Closeable socket, final WebSocketDelegate delegate) {
 		super();
-		this.mSocket = socket;
-		this.mDelegate = delegate;
-		this.mStream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);
+		this.socket = socket;
+		this.delegate = delegate;
+		this.stream = new ByteArrayOutputStream(BUFFER_INITIAL_SIZE);
 	}
 
 	/*
@@ -106,39 +108,35 @@ final class WebSocketOutputStream extends OutputStream {
 
 	/**
 	 */
-	@Override
-	public void write(@Nonnull final byte[] bytes, final int offset, final int length) throws IOException {
+	@Override public void write(@Nonnull final byte[] bytes, final int offset, final int length) throws IOException {
 		assertOpenedOrThrowException();
-		this.mStream.write(bytes, offset, length);
+		this.stream.write(bytes, offset, length);
 	}
 
 	/**
 	 */
-	@Override
-	public void write(final int b) throws IOException {
+	@Override public void write(final int b) throws IOException {
 		assertOpenedOrThrowException();
-		this.mStream.write(b);
+		this.stream.write(b);
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized void flush() throws IOException {
+	@Override public synchronized void flush() throws IOException {
 		assertOpenedOrThrowException();
-		if (mStream.size() > 0) {
-			this.mDelegate.sendFrame(new WebSocketFrame.Builder().payload(mStream.toByteArray()).build());
-			this.mStream.reset();
+		if (stream.size() > 0) {
+			this.delegate.sendFrame(new WebSocketFrame.Builder().payload(stream.toByteArray()).build());
+			this.stream.reset();
 		}
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized void close() throws IOException {
-		if (!mClosed.get()) {
-			this.mStream.reset();
-			this.mSocket.close();
-			this.mClosed.set(true);
+	@Override public synchronized void close() throws IOException {
+		if (!closed.get()) {
+			this.stream.reset();
+			this.socket.close();
+			this.closed.set(true);
 		}
 	}
 
@@ -148,15 +146,15 @@ final class WebSocketOutputStream extends OutputStream {
 	 * @throws IOException If this stream has been already closed.
 	 */
 	private void assertOpenedOrThrowException() throws IOException {
-		if (mClosed.get()) throw new IOException(TAG + " has been already closed.");
+		if (closed.get()) throw new IOException(TAG + " has been already closed.");
 	}
 
 	/**
 	 * Destroys this stream. Destroying the stream also marks it as closed.
 	 */
 	void destroy() {
-		this.mStream = null;
-		this.mClosed.set(true);
+		this.stream = null;
+		this.closed.set(true);
 	}
 
 	/*
