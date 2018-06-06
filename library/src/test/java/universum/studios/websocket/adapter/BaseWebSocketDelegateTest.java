@@ -36,8 +36,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
  */
 public final class BaseWebSocketDelegateTest {
     
-    @Test
-	public void testRegisterOnConnectionListener() {
+    @Test public void testRegisterOnConnectionListener() {
 	    final BaseWebSocketDelegate delegate = new TestDelegate();
 	    final WebSocketDelegate.OnConnectionListener firstMockListener = mock(WebSocketDelegate.OnConnectionListener.class);
 	    final WebSocketDelegate.OnConnectionListener secondMockListener = mock(WebSocketDelegate.OnConnectionListener.class);

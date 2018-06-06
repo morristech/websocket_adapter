@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
  * {@link OnConnectionListener OnConnectionListenera} and {@link OnIncomingFrameListener OnIncomingFrameListeners}.
  *
  * @author Martin Albedinsky
+ * @since 1.0
  */
 public abstract class BaseWebSocketDelegate implements WebSocketDelegate {
 
@@ -77,8 +78,7 @@ public abstract class BaseWebSocketDelegate implements WebSocketDelegate {
 
 	/**
 	 */
-	@Override
-	public void registerOnConnectionListener(@Nonnull final OnConnectionListener listener) {
+	@Override public void registerOnConnectionListener(@Nonnull final OnConnectionListener listener) {
 		synchronized (mConnectionListeners) {
 			if (!mConnectionListeners.contains(listener)) mConnectionListeners.add(listener);
 		}
@@ -114,8 +114,7 @@ public abstract class BaseWebSocketDelegate implements WebSocketDelegate {
 
 	/**
 	 */
-	@Override
-	public void unregisterOnConnectionListener(@Nonnull final OnConnectionListener listener) {
+	@Override public void unregisterOnConnectionListener(@Nonnull final OnConnectionListener listener) {
 		synchronized (mConnectionListeners) {
 			mConnectionListeners.remove(listener);
 		}
@@ -123,8 +122,7 @@ public abstract class BaseWebSocketDelegate implements WebSocketDelegate {
 
 	/**
 	 */
-	@Override
-	public void registerOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
+	@Override public void registerOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
 		synchronized (mIncomingFrameListeners) {
 			if (!mIncomingFrameListeners.contains(listener)) mIncomingFrameListeners.add(listener);
 		}
@@ -148,8 +146,7 @@ public abstract class BaseWebSocketDelegate implements WebSocketDelegate {
 
 	/**
 	 */
-	@Override
-	public void unregisterOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
+	@Override public void unregisterOnIncomingFrameListener(@Nonnull final OnIncomingFrameListener listener) {
 		synchronized (mIncomingFrameListeners) {
 			mIncomingFrameListeners.remove(listener);
 		}

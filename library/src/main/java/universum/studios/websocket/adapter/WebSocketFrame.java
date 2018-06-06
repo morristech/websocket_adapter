@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
  * Implementation of {@link WebSocketDelegate.Frame}.
  *
  * @author Martin Albedinsky
+ * @since 1.0
  */
 public final class WebSocketFrame implements WebSocketDelegate.Frame {
 
@@ -51,12 +52,12 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 	/**
 	 * Payload data of this frame.
 	 */
-	private final byte[] mPayload;
+	private final byte[] payload;
 
 	/**
 	 * Boolean flag indicating whether this frame is a final frame.
 	 */
-	private final boolean mFinal;
+	private final boolean isFinal;
 	 
 	/*
 	 * Constructors ================================================================================
@@ -69,8 +70,8 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 	 */
 	@SuppressWarnings("WeakerAccess")
 	WebSocketFrame(final Builder builder) {
-		this.mPayload = builder.payload;
-		this.mFinal = builder.isFinal;
+		this.payload = builder.payload;
+		this.isFinal = builder.isFinal;
 	}
 	 
 	/*
@@ -79,17 +80,14 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 
 	/**
 	 */
-	@Nonnull
-	@Override
-	public byte[] getPayload() {
-		return mPayload;
+	@Override @Nonnull public byte[] getPayload() {
+		return payload;
 	}
 
 	/**
 	 */
-	@Override
-	public boolean isFinal() {
-		return mFinal;
+	@Override public boolean isFinal() {
+		return isFinal;
 	}
 
 	/*
@@ -105,16 +103,19 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 	 * <ul>
 	 * <li>{@link #payload(byte[])}</li>
 	 * </ul>
+	 *
+	 * @author Martin Albedinsky
+	 * @since 1.0
 	 */
 	public static final class Builder {
 
 		/**
-		 * See {@link WebSocketFrame#mPayload}.
+		 * See {@link WebSocketFrame#payload}.
 		 */
 		byte[] payload;
 
 		/**
-		 * See {@link WebSocketFrame#mFinal}.
+		 * See {@link WebSocketFrame#isFinal}.
 		 */
 		boolean isFinal = true;
 
@@ -123,6 +124,7 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 		 *
 		 * @param payload The desired payload data.
 		 * @return This builder to allow methods chaining.
+		 *
 		 * @see WebSocketFrame#getPayload()
 		 */
 		public Builder payload(@Nonnull final byte[] payload) {
@@ -138,6 +140,7 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 		 * @param isFinal {@code True} if the new frame should be a final frame, {@code false}
 		 *                otherwise.
 		 * @return This builder to allow methods chaining.
+		 *
 		 * @see WebSocketFrame#isFinal()
 		 */
 		public Builder isFinal(final boolean isFinal) {
@@ -151,8 +154,7 @@ public final class WebSocketFrame implements WebSocketDelegate.Frame {
 		 * @return WebSocketFrame instance ready to be delivered.
 		 * @throws IllegalArgumentException If some of the required parameters is missing.
 		 */
-		@Nonnull
-		public WebSocketFrame build() {
+		@Nonnull public WebSocketFrame build() {
 			if (payload == null) {
 				throw new IllegalArgumentException("No payload specified.");
 			}

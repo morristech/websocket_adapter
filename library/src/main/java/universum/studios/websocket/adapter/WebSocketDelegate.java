@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
  * using {@link WebSocketAdapter}.
  *
  * @author Martin Albedinsky
+ * @since 1.0
  */
 public interface WebSocketDelegate {
 
@@ -36,6 +37,7 @@ public interface WebSocketDelegate {
 	 * Listener which may be used to listen for callbacks about connected and disconnected WebSocket.
 	 *
 	 * @author Martin Albedinsky
+	 * @since 1.0
 	 */
 	interface OnConnectionListener {
 
@@ -62,16 +64,13 @@ public interface WebSocketDelegate {
 
 			/**
 			 */
-			@Nonnull
-			@Override
-			public byte[] getPayload() {
+			@Override @Nonnull public byte[] getPayload() {
 				return new byte[0];
 			}
 
 			/**
 			 */
-			@Override
-			public boolean isFinal() {
+			@Override public boolean isFinal() {
 				return true;
 			}
 		};
@@ -81,8 +80,7 @@ public interface WebSocketDelegate {
 		 *
 		 * @return Frame's payload.
 		 */
-		@Nonnull
-		byte[] getPayload();
+		@Nonnull byte[] getPayload();
 
 		/**
 		 * Returns boolean flag indicating whether this frame is a final frame.
@@ -97,6 +95,7 @@ public interface WebSocketDelegate {
 	 * Listener which may be used to listen for callback about received WebSocket frame.
 	 *
 	 * @author Martin Albedinsky
+	 * @since 1.0
 	 */
 	interface OnIncomingFrameListener {
 
@@ -112,6 +111,7 @@ public interface WebSocketDelegate {
 	 * Registers a listener to be invoked whenever the WebSocket connects or disconnects.
 	 *
 	 * @param listener The desired listener to be registered.
+	 *
 	 * @see #unregisterOnConnectionListener(OnConnectionListener)
 	 */
 	void registerOnConnectionListener(@Nonnull OnConnectionListener listener);
@@ -121,6 +121,7 @@ public interface WebSocketDelegate {
 	 * receive any callbacks.
 	 *
 	 * @param listener The desired listener to be un-registered.
+	 *
 	 * @see #registerOnConnectionListener(OnConnectionListener)
 	 */
 	void unregisterOnConnectionListener(@Nonnull OnConnectionListener listener);
@@ -129,6 +130,7 @@ public interface WebSocketDelegate {
 	 * Registers a listener to be invoked whenever the WebSocket receives a new frame.
 	 *
 	 * @param listener The desired listener to be registered.
+	 *
 	 * @see #unregisterOnIncomingFrameListener(OnIncomingFrameListener)
 	 */
 	void registerOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
@@ -138,6 +140,7 @@ public interface WebSocketDelegate {
 	 * receive any callbacks.
 	 *
 	 * @param listener The desired listener to be un-registered.
+	 *
 	 * @see #registerOnIncomingFrameListener(OnIncomingFrameListener)
 	 */
 	void unregisterOnIncomingFrameListener(@Nonnull OnIncomingFrameListener listener);
@@ -171,6 +174,7 @@ public interface WebSocketDelegate {
 	 * Closes the wrapped WebSocket.
 	 *
 	 * @throws IOException If some IO error occurs during close operation.
+	 *
 	 * @see #isClosed()
 	 */
 	void close() throws IOException;
