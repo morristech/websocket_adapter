@@ -23,9 +23,9 @@ import org.junit.Test;
 import java.io.Closeable;
 import java.io.IOException;
 
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -35,11 +35,12 @@ import static org.mockito.Mockito.verifyZeroInteractions;
  */
 public class WebSocketOutputStreamTest {
 
-	@Test
-	public void testWriteBytes() throws Exception {
+	@Test public void testWriteBytes() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		// Act + Assert:
 		stream.write(new byte[]{0}, 0, 1);
 		verifyZeroInteractions(mockDelegate);
 		stream.write(new byte[]{1, 1}, 0, 2);
@@ -49,18 +50,21 @@ public class WebSocketOutputStreamTest {
 
 	@Test(expected = IOException.class)
 	public void testWriteBytesWhenAlreadyClosed() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
 		stream.close();
+		// Act:
 		stream.write(new byte[]{0}, 0, 1);
 	}
 
-	@Test
-	public void testWriteByte() throws Exception {
+	@Test public void testWriteByte() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		// Act + Assert:
 		stream.write(0);
 		verifyZeroInteractions(mockDelegate);
 		stream.write(1);
@@ -70,18 +74,21 @@ public class WebSocketOutputStreamTest {
 
 	@Test(expected = IOException.class)
 	public void testWriteByteWhenAlreadyClosed() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
 		stream.close();
+		// Act:
 		stream.write(0);
 	}
 
-	@Test
-	public void testFlush() throws Exception {
+	@Test public void testFlush() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		// Act + Assert:
 		stream.write(0);
 		verifyZeroInteractions(mockDelegate);
 		stream.write(1);
@@ -89,50 +96,59 @@ public class WebSocketOutputStreamTest {
 		stream.write(new byte[]{1, 1}, 0, 2);
 		verifyZeroInteractions(mockDelegate);
 		stream.flush();
-		verify(mockDelegate, times(1)).sendFrame(any(WebSocketDelegate.Frame.class));
+		verify(mockDelegate).sendFrame(any(WebSocketDelegate.Frame.class));
 		verifyNoMoreInteractions(mockDelegate);
 		verifyZeroInteractions(mockSocket);
 	}
 
-	@Test
-	public void testFlushWithoutBytesWritten() throws Exception {
+	@Test public void testFlushWithoutBytesWritten() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		// Act:
 		stream.flush();
+		// Assert:
 		verifyZeroInteractions(mockDelegate);
 		verifyZeroInteractions(mockSocket);
 	}
 
 	@Test(expected = IOException.class)
 	public void testFlushWhenAlreadyClosed() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
 		stream.close();
+		// Act:
 		stream.flush();
 	}
 
-	@Test
-	public void testClose() throws Exception {
+	@Test public void testClose() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
 		stream.write(0);
 		stream.write(new byte[]{0}, 0, 1);
+		// Act:
 		stream.close();
 		stream.close();
-		verify(mockSocket, times(1)).close();
+		// Assert:
+		verify(mockSocket).close();
 		verifyNoMoreInteractions(mockSocket);
 		verifyZeroInteractions(mockDelegate);
 	}
 
 	@Test(expected = IOException.class)
 	public void testDestroy() throws Exception {
+		// Arrange:
 		final Closeable mockSocket = mock(Closeable.class);
 		final WebSocketDelegate mockDelegate = mock(WebSocketDelegate.class);
 		final WebSocketOutputStream stream = new WebSocketOutputStream(mockSocket, mockDelegate);
+		// Act:
 		stream.destroy();
+		// Assert:
 		stream.write(0);
 	}
 }

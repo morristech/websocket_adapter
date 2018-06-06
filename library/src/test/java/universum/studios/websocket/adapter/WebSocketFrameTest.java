@@ -20,6 +20,7 @@ package universum.studios.websocket.adapter;
 
 import org.junit.Test;
 
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -29,26 +30,31 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 public final class WebSocketFrameTest {
     
-    @Test
-	public void testBuilderBuild() {
+    @Test public void testInstantiation() {
+	    // Arrange:
 	    final byte[] payload = new byte[]{0, 1, 1, 1, 0};
+	    // Act:
 	    final WebSocketFrame frame = new WebSocketFrame.Builder().payload(payload).build();
+	    // Assert:
 	    assertThat(frame, is(notNullValue()));
 	    assertThat(frame.getPayload(), is(payload));
 	    assertThat(frame.isFinal(), is(true));
 	}
 
-    @Test
-	public void testBuilderBuildFinalFrame() {
-	    final byte[] payload = new byte[]{0, 1, 1, 1, 0};
-	    final WebSocketFrame frame = new WebSocketFrame.Builder().payload(payload).isFinal(false).build();
+    @Test public void testInstantiationOfFinalFrame() {
+	    // Arrange:
+    	final byte[] payload = new byte[]{0, 1, 1, 1, 0};
+	    // Act:
+    	final WebSocketFrame frame = new WebSocketFrame.Builder().payload(payload).isFinal(false).build();
+	    // Assert:
 	    assertThat(frame, is(notNullValue()));
 	    assertThat(frame.getPayload(), is(payload));
 	    assertThat(frame.isFinal(), is(false));
 	}
 
     @Test(expected = IllegalArgumentException.class)
-	public void testBuilderBuildWithoutPayload() {
-	    new WebSocketFrame.Builder().build();
+	public void testInstantiationWithoutPayload() {
+	    // Act:
+    	new WebSocketFrame.Builder().build();
 	}
 }

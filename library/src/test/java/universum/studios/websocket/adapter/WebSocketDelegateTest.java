@@ -29,8 +29,8 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 public final class WebSocketDelegateTest {
     
-    @Test
-	public void testFrameEMPTY() {
+    @Test public void testFrameEmptyInstance() {
+    	// Assert:
 	    assertThat(WebSocketDelegate.Frame.EMPTY, is(notNullValue()));
 	    assertThat(WebSocketDelegate.Frame.EMPTY.getPayload(), is(new byte[0]));
 	    assertThat(WebSocketDelegate.Frame.EMPTY.isFinal(), is(true));
