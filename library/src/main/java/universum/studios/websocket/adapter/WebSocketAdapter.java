@@ -1,20 +1,20 @@
 /*
- * =================================================================================================
- *                             Copyright (C) 2017 Universum Studios
- * =================================================================================================
- *         Licensed under the Apache License, Version 2.0 or later (further "License" only).
+ * *************************************************************************************************
+ *                                 Copyright 2017 Universum Studios
+ * *************************************************************************************************
+ *                  Licensed under the Apache License, Version 2.0 (the "License")
  * -------------------------------------------------------------------------------------------------
- * You may use this file only in compliance with the License. More details and copy of this License
- * you may obtain at
+ * You may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You can redistribute, modify or publish any part of the code written within this file but as it
- * is described in the License, the software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES or CONDITIONS OF ANY KIND.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied.
  *
  * See the License for the specific language governing permissions and limitations under the License.
- * =================================================================================================
+ * *************************************************************************************************
  */
 package universum.studios.websocket.adapter;
 
@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
  * the appropriate callbacks, like receiving frames.
  *
  * @author Martin Albedinsky
+ * @since 1.0
  */
 public class WebSocketAdapter extends Socket {
 
@@ -47,8 +48,7 @@ public class WebSocketAdapter extends Socket {
 	/**
 	 * Log TAG.
 	 */
-	@SuppressWarnings("unused")
-	private static final String TAG = "WebSocketAdapter";
+	// private static final String TAG = "WebSocketAdapter";
 
 	/*
 	 * Interface ===================================================================================
@@ -66,24 +66,24 @@ public class WebSocketAdapter extends Socket {
 	 * Delegate that hides concrete implementation of WebSocket that this adapter adapts in context
 	 * of synchronous nature of Socket.
 	 */
-	private final WebSocketDelegate mDelegate;
+	private final WebSocketDelegate delegate;
 
 	/**
 	 * Boolean flag indicating whether this socket is connected to the remote server at this time
 	 * or not.
 	 */
 	@SuppressWarnings("WeakerAccess")
-	final AtomicBoolean mConnected = new AtomicBoolean(false);
+	final AtomicBoolean connected = new AtomicBoolean(false);
 
 	/**
 	 * Stream used as store data that are received from the WebSocket.
 	 */
-	private WebSocketInputStream mInputStream;
+	private WebSocketInputStream inputStream;
 
 	/**
 	 * Stream used to store data to be send/delegated to the WebSocket.
 	 */
-	private WebSocketOutputStream mOutputStream;
+	private WebSocketOutputStream outputStream;
 
 	/*
 	 * Constructors ================================================================================
@@ -99,21 +99,19 @@ public class WebSocketAdapter extends Socket {
 	 */
 	public WebSocketAdapter(@Nonnull final WebSocketDelegate delegate) {
 		super();
-		this.mDelegate = delegate;
-		this.mDelegate.registerOnConnectionListener(new WebSocketDelegate.OnConnectionListener() {
+		this.delegate = delegate;
+		this.delegate.registerOnConnectionListener(new WebSocketDelegate.OnConnectionListener() {
 
 			/**
 			 */
-			@Override
-			public void onConnected() {
-				mConnected.set(true);
+			@Override public void onConnected() {
+				connected.set(true);
 			}
 
 			/**
 			 */
-			@Override
-			public void onDisconnected() {
-				mConnected.set(false);
+			@Override public void onDisconnected() {
+				connected.set(false);
 				destroyStreams();
 			}
 		});
@@ -125,16 +123,14 @@ public class WebSocketAdapter extends Socket {
 
 	/**
 	 */
-	@Override
-	public void connect(@Nonnull final SocketAddress endpoint) throws IOException {
+	@Override public void connect(@Nonnull final SocketAddress endpoint) throws IOException {
 		connect(endpoint, 0);
 	}
 
 	/**
 	 */
-	@Override
-	public void connect(@Nonnull final SocketAddress endpoint, final int timeout) throws IOException {
-		mDelegate.connect(endpoint, timeout);
+	@Override public void connect(@Nonnull final SocketAddress endpoint, final int timeout) throws IOException {
+		this.delegate.connect(endpoint, timeout);
 	}
 
 	/**
@@ -145,15 +141,15 @@ public class WebSocketAdapter extends Socket {
 	 *
 	 * @see #isClosed()
 	 */
-	@Override
-	public final boolean isConnected() {
-		return mDelegate.isConnected();
+	@Override public final boolean isConnected() {
+		return delegate.isConnected();
 	}
 
 	/**
 	 * Asserts that this socket is connected. If not an exception is thrown.
 	 *
 	 * @throws IOException If this socket is not connected.
+	 *
 	 * @see #isConnected()
 	 */
 	protected final void assertConnectedOrThrowException() throws IOException {
@@ -162,32 +158,31 @@ public class WebSocketAdapter extends Socket {
 
 	/**
 	 */
-	@Override
-	public synchronized final InputStream getInputStream() throws IOException {
+	@Override public synchronized final InputStream getInputStream() throws IOException {
 		assertOpenedOrThrowException();
 		assertConnectedOrThrowException();
-		if (mInputStream == null) {
-			this.mInputStream = new WebSocketInputStream(this, mDelegate);
+		if (inputStream == null) {
+			this.inputStream = new WebSocketInputStream(this, delegate);
 		}
-		return mInputStream;
+		return inputStream;
 	}
 
 	/**
 	 */
-	@Override
-	public synchronized final OutputStream getOutputStream() throws IOException {
+	@Override public synchronized final OutputStream getOutputStream() throws IOException {
 		assertOpenedOrThrowException();
 		assertConnectedOrThrowException();
-		if (mOutputStream == null) {
-			this.mOutputStream = new WebSocketOutputStream(this, mDelegate);
+		if (outputStream == null) {
+			this.outputStream = new WebSocketOutputStream(this, delegate);
 		}
-		return mOutputStream;
+		return outputStream;
 	}
 
 	/**
 	 * Asserts that this socket is opened. If not an exception is thrown.
 	 *
 	 * @throws IOException If this socket is not opened.
+	 *
 	 * @see #isClosed()
 	 */
 	protected final void assertOpenedOrThrowException() throws IOException {
@@ -196,10 +191,9 @@ public class WebSocketAdapter extends Socket {
 
 	/**
 	 */
-	@Override
-	public synchronized final void close() throws IOException {
+	@Override public synchronized final void close() throws IOException {
 		if (!isClosed()) {
-			mDelegate.close();
+			delegate.close();
 			destroyStreams();
 		}
 	}
@@ -209,13 +203,13 @@ public class WebSocketAdapter extends Socket {
 	 */
 	@SuppressWarnings("WeakerAccess")
 	void destroyStreams() {
-		if (mInputStream != null) {
-			this.mInputStream.destroy();
-			this.mInputStream = null;
+		if (inputStream != null) {
+			this.inputStream.destroy();
+			this.inputStream = null;
 		}
-		if (mOutputStream != null) {
-			this.mOutputStream.destroy();
-			this.mOutputStream = null;
+		if (outputStream != null) {
+			this.outputStream.destroy();
+			this.outputStream = null;
 		}
 	}
 
@@ -226,9 +220,8 @@ public class WebSocketAdapter extends Socket {
 	 *
 	 * @see #isConnected()
 	 */
-	@Override
-	public final boolean isClosed() {
-		return mDelegate.isClosed();
+	@Override public final boolean isClosed() {
+		return delegate.isClosed();
 	}
 
 	/*
