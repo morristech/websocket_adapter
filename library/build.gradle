@@ -11,7 +11,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
  */
 dependencies {
     // PRODUCTION ----------------------------------------------------------------------------------
-    implementation deps.codeQuality.findbugs
+    implementation deps.quality.findbugs
 
     // DEVELOPMENT ---------------------------------------------------------------------------------
     // None.

@@ -13,7 +13,7 @@ so it is hard to find rules that will satisfy all of them. New general rules may
 
 > Use below rules to keep **"sensitive"** source code of the library.
 
-    # No special rules are required. Library may be fully obfuscated.
+    # No special rules required. Library may be fully obfuscated.
 
 > Use below rules to keep **entire** source code of the library.
 

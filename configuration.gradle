@@ -73,9 +73,7 @@ def javadocConfig = [
         reference: [online: "https://universum-studios.github.io/${libraryConfig.name}/reference/1.x"]
 ]
 
-def mavenConfig = [
-        localUrl: System.getenv('MAVEN_URL_LOCAL')
-]
+def mavenConfig = [localUrl: System.getenv('MAVEN_URL_LOCAL')]
 
 def bintrayConfig = [
         publish: false,
