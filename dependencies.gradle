@@ -1,21 +1,22 @@
 // Defines dependencies used across the library project.
 def versions = [
-        gradle : '4.7',
-        junit  : '4.12',
-        mockito: '2.18.0'
+        gradle: '4.10.2',
+        test  : [
+                junit  : '4.12',
+                assertj: '3.8.0',
+                mockito: '2.22.0'
+        ]
 ]
 
-def codeQuality = [
-        findbugs: 'com.google.code.findbugs:jsr305:3.0.2'
-]
+def quality = [findbugs: 'com.google.code.findbugs:jsr305:3.0.2']
 
 def test = [
-        junit      : "junit:junit:${versions.junit}",
-        mockitoCore: "org.mockito:mockito-core:${versions.mockito}",
+        junit      : "junit:junit:${versions.test.junit}",
+        mockitoCore: "org.mockito:mockito-core:${versions.test.mockito}"
 ]
 
 ext.versions = versions
 ext.deps = [
-        "codeQuality": codeQuality,
-        "test"       : test
+        "quality": quality,
+        "test"   : test
 ]
